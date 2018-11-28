@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CGeoLayer" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAEACAAAAgAAABAEAgQAAAAAAAAAAAAAAgAAACA=</HashCode>
+      <FileName>GeoLayer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGeoMap" Collapsed="true">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAACABAgCAEAIAAgQAAAAgAABCAAAEAIAAQAg=</HashCode>
+      <FileName>GeoMap.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGeoObject" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABCAAAgCAAgAAAgQAAAAAAABAAQAEAAAACgA=</HashCode>
+      <FileName>GeoObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>
