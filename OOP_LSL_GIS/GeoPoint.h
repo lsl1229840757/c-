@@ -10,8 +10,8 @@ public:
 	void setPoint(CPoint pt);
 	void Draw(CDC *pDC);
 private:
-	int x;
-	int y;
+	CPoint cpt;
+
 
 };
 

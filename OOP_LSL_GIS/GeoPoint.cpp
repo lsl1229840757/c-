@@ -11,10 +11,14 @@ CGeoPoint::~CGeoPoint(void)
 {
 }
 void CGeoPoint::setPoint(int x,int y){
-	this->x = x;
-	this->y = y;
+	this->cpt.x = x;
+	this->cpt.y = y;
 }
 void CGeoPoint::setPoint(CPoint pt){
-	this->x = pt.x;
-	this->y = pt.y;
+	this->cpt = pt;
+}
+
+void CGeoPoint::Draw(CDC *pDC)
+{
+
 }

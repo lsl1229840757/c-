@@ -50,14 +50,28 @@ BOOL COOP_LSL_GISView::PreCreateWindow(CREATESTRUCT& cs)
 
 // COOP_LSL_GISView 绘制
 
-void COOP_LSL_GISView::OnDraw(CDC* /*pDC*/)
+void COOP_LSL_GISView::OnDraw(CDC* pDC)
 {
 	COOP_LSL_GISDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
-	if (!pDoc)
+	if (!pDoc){
 		return;
-
-	// TODO: 在此处为本机数据添加绘制代码
+	}
+	pDC->SetMapMode(MM_ANISOTROPIC);
+	CPen penBlack;//定义一个画笔变量
+	 penBlack.CreatePen(PS_SOLID,2,RGB(0,0,0));//创建画笔
+	CPen *pOldPen=pDC->SelectObject(&penBlack);
+		CPoint p1 = CPoint();
+		p1.x = 10;
+		p1.y = 10;
+		CPoint p2 = CPoint();
+		p2.y = 2000;
+		p2.y = 2000;
+		CGeoPloyline cline = CGeoPloyline();
+		cline.addPoint(p1);
+		cline.addPoint(p2);
+		cline.Draw(pDC);
+		ReleaseDC(pDC);
 }
 
 

@@ -3,7 +3,11 @@
 //
 
 #pragma once
-
+#include "GeoLayer.h"
+#include "GeoObject.h"
+#include "GeoMap.h"
+#include "GeoPoint.h"
+#include "GeoPloyline.h"
 
 class COOP_LSL_GISView : public CView
 {
