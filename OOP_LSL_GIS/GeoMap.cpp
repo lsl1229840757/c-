@@ -29,3 +29,11 @@ void CGeoMap::setRect(CRect rect){
 CRect CGeoMap::getRect(){
 	return this->crRect;
 }
+
+void CGeoMap::Draw(CDC *pDC){
+	for (int i = 0; i < geoLayers.GetSize(); i++)
+	{
+		geoLayers[i]->Draw(pDC);
+	}
+
+}
