@@ -2,7 +2,7 @@
 #include "GeoMap.h"
 
 
-CGeoMap::CGeoMap(void)
+CGeoMap::CGeoMap(int Scale):Scale(Scale)
 {
 }
 
@@ -20,9 +20,7 @@ void CGeoMap::setName(CString name){
 int CGeoMap::getScale(){
 	return this->Scale;
 }
-void CGeoMap::setScale(int scale){
-	this->Scale = scale;
-}
+
 void CGeoMap::setRect(CRect rect){
 	this->crRect = rect;
 }
@@ -35,5 +33,15 @@ void CGeoMap::Draw(CDC *pDC){
 	{
 		geoLayers[i]->Draw(pDC);
 	}
+}
 
+void CGeoMap::addLayer(CGeoLayer *layer){
+	geoLayers.Add(layer);
+}
+
+void CGeoMap::delLayerAt(int idx){
+	geoLayers.RemoveAt(idx);
+}
+void CGeoMap::delLayerAll(){
+	geoLayers.RemoveAll();
 }

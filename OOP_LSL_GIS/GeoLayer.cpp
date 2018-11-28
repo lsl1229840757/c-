@@ -17,3 +17,13 @@ void CGeoLayer::Draw(CDC *pDC){
 		geoObjects[i]->Draw(pDC);
 	}
 }
+
+void CGeoLayer::addObject(CGeoObject *obj){
+	geoObjects.Add(obj);
+}
+void CGeoLayer::delObjectAt(int idx){
+	geoObjects.RemoveAt(idx);
+}
+void CGeoLayer::delObjectAll(){
+	geoObjects.RemoveAll();
+}

@@ -5,7 +5,8 @@ class CGeoMap
 public:
 	CGeoMap(void);
 	~CGeoMap(void);
-	int Scale; // 地图比例尺
+	CGeoMap(int Scale);
+	const int Scale; // 地图比例尺
 	CRect crRect;// 地图范围
 	CString getName();// 获得名字
 	void setName(CString name);
