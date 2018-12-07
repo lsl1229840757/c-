@@ -26,3 +26,4 @@ int CGeoPloyline::getSize(){
 void CGeoPloyline::addPoint(CPoint pt){
 	this->pts.Add(pt);
 }
+

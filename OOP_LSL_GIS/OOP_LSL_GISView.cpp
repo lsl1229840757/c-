@@ -86,7 +86,6 @@ void COOP_LSL_GISView::OnDraw(CDC* pDC)
 
 }
 
-
 void COOP_LSL_GISView::readWHData(FILE *fp)
 {
 	int x1,y1,x2,y2;
@@ -109,7 +108,6 @@ void COOP_LSL_GISView::readWHData(FILE *fp)
 		((CGeoPloyline*)obj)->addPoint(CPoint(x2,y2));
 		layer->addObject(obj);
 	}
-	int a = 1;
 }
 
 void COOP_LSL_GISView::readCHData(FILE *fp)
@@ -134,11 +132,10 @@ void COOP_LSL_GISView::readCHData(FILE *fp)
 
 void COOP_LSL_GISView::readCH1Data(FILE *fp)
 {
-	int x,y;
 	if(map != NULL)
 		delete map;
 	map = new CGeoMap(1);
-
+	/*
 	CGeoLayer *layer = new CGeoLayer;
 	map->addLayer(layer);
 	while( !feof(fp))
@@ -151,10 +148,85 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 		//layer->addObject(pt);
 		layer->addObject(obj);
 	}
+	*/
+	// 开始读文件头
+	int left,top,right,bottom;
+	fscanf(fp,"%d,%d",&left,&top);
+	fscanf(fp,"%d,%d",&right,&bottom);
+	map->setRect(CRect(left,top,right,bottom));
+	int layerNum;
+	fscanf(fp,"%d",&layerNum);
+	// 创建layer指针
+	CGeoLayer* layers = new CGeoLayer[layerNum];
+	int layerIndex = 0;
+	// 读头文件结束
+	while(!feof(fp)){
+			//开始读取layer
+			int layerNameSize;
+			fscanf(fp,"%d",&layerNameSize);
+			char layerName[20];
+			fscanf(fp,"%s",&layerName);
+			int featureNum;
+			fscanf(fp,"%d",&featureNum);
+			for(int i=0;i<featureNum;i++){
+					int featureType;
+					fscanf(fp,"%d",&featureType);
+					if(featureType==1){
+						int a = 10;
+					}
+					switch (featureType)
+					{
+					case 1:
+						//这是线
+						while(!feof(fp)){
+							int x1,y1,x2,y2;
+							CGeoObject *obj=new CGeoPloyline;
+							fscanf(fp,"%d,%d",&x1,&y1);
+							if(x1==-99999){
+								break;
+							}
+							x1 = x1/1000;
+							y1 = y1/1000;
+							fscanf(fp,"%d,%d",&x2,&y2);
+							x2 = x2/1000;
+							y2 = y2/1000;
+							((CGeoPloyline*)obj)->addPoint(CPoint(x1,y1));
+							((CGeoPloyline*)obj)->addPoint(CPoint(x2,y2));
+							(layers+layerIndex)->addObject(obj);
+						}
+						break;
+					case 2:
+						//这是点
+						while(!feof(fp)){
+							int x,y;
+							CGeoObject *obj=new CGeoPoint;
+							fscanf(fp,"%d,%d",&x,&y);
+							if(x==-99999){
+								break;
+							}
+							x = x/1000;
+							y = y/1000;
+							((CGeoPoint *)obj)->setPoint(CPoint(x,y));
+							(layers+layerIndex)->addObject(obj);
+						}
+						break;
+					case 4:
+						//这是注记
+						char name[20];
+						fscanf(fp,"%s",&name);
+						int x;
+						fscanf(fp,"%d",&x);
+						break;
+					default:
+						break;
+					}
+			}
+			layerIndex++;
+	}
+	for(int i =0;i<layerNum;i++){
+		map->addLayer((layers+i));
+	}
 }
-
-
-
 
 // COOP_LSL_GISView 打印
 
@@ -215,7 +287,7 @@ void COOP_LSL_GISView::OnFileOpen()
 		readWHData(fp);
 	else if( fileName.Right(10) == "china1.txt" )
 		readCHData(fp);
-	else if( fileName.Right(10) == "china1.dat" )
+	else if( fileName.Right(10) == "china1.dat" ) //测试数据
 		readCH1Data(fp);
 	fclose(fp);
 	Invalidate();

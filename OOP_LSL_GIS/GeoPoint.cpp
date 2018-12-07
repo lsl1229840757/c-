@@ -9,9 +9,8 @@ CGeoPoint::CGeoPoint(void)
 
 CGeoPoint::~CGeoPoint(void)
 {
+
 }
-
-
 void CGeoPoint::setPoint(int x,int y){
 	this->cpt.x = x;
 	this->cpt.y = y;
