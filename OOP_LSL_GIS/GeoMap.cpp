@@ -5,8 +5,12 @@
 CGeoMap::CGeoMap(int Scale):Scale(Scale)
 {
 }
+/*
+CGeoMap::CGeoMap()
+{
 
-
+}
+*/
 CGeoMap::~CGeoMap(void)
 {
 }

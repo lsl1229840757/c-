@@ -6,7 +6,6 @@ CGeoObject::CGeoObject(void)
 {
 }
 
-
 CGeoObject::~CGeoObject(void)
 {
 }
@@ -37,8 +36,9 @@ void CGeoObject::setRect(int x1,int y1,int width,int height){
 	crRect.right = x1+width;
 	crRect.bottom = y1+height;
 }
-
+/*
 void CGeoObject::Draw(CDC *pDC){
 
 
 }
+*/

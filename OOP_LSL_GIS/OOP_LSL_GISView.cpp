@@ -1,8 +1,8 @@
 
 // OOP_LSL_GISView.cpp : COOP_LSL_GISView 类的实现
 //
-
 #include "stdafx.h"
+
 // SHARED_HANDLERS 可以在实现预览、缩略图和搜索筛选器句柄的
 // ATL 项目中进行定义，并允许与该项目共享文档代码。
 #ifndef SHARED_HANDLERS
@@ -11,7 +11,6 @@
 
 #include "OOP_LSL_GISDoc.h"
 #include "OOP_LSL_GISView.h"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -26,6 +25,7 @@ BEGIN_MESSAGE_MAP(COOP_LSL_GISView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_COMMAND(ID_FILE_OPEN, &COOP_LSL_GISView::OnFileOpen)
 END_MESSAGE_MAP()
 
 // COOP_LSL_GISView 构造/析构
@@ -33,11 +33,13 @@ END_MESSAGE_MAP()
 COOP_LSL_GISView::COOP_LSL_GISView()
 {
 	// TODO: 在此处添加构造代码
-
+	map = NULL;
 }
 
 COOP_LSL_GISView::~COOP_LSL_GISView()
 {
+	if(map!= NULL)
+		delete map;
 }
 
 BOOL COOP_LSL_GISView::PreCreateWindow(CREATESTRUCT& cs)
@@ -57,28 +59,108 @@ void COOP_LSL_GISView::OnDraw(CDC* pDC)
 	if (!pDoc){
 		return;
 	}
+	if(map != NULL)
+		map->Draw(pDC);
+	/*
 	pDC->SetMapMode(MM_ANISOTROPIC);
 	CPen penBlack;//定义一个画笔变量
-	 penBlack.CreatePen(PS_SOLID,2,RGB(0,0,0));//创建画笔
+	penBlack.CreatePen(PS_SOLID,2,RGB(0,0,0));//创建画笔
 	CPen *pOldPen=pDC->SelectObject(&penBlack);
-		CPoint p1 = CPoint();
-		p1.x = 10;
-		p1.y = 10;
-		CPoint p2 = CPoint();
-		p2.y = 2000;
-		p2.y = 2000;
-		CGeoPloyline cline = CGeoPloyline();
-		cline.addPoint(p1);
-		cline.addPoint(p2);
-		cline.Draw(pDC);
-		ReleaseDC(pDC);
+	CPoint p1 = CPoint();
+	p1.x = 10;
+	p1.y = 10;
+	CPoint p2 = CPoint();
+	p2.y = 2000;
+	p2.y = 2000;
+	CGeoPloyline cline = CGeoPloyline();
+	cline.addPoint(p1);
+	cline.addPoint(p2);
+	//cline.Draw(pDC);
+	
+	CGeoPoint cp = CGeoPoint();
+	cp.setPoint(p1);
+	cp.Draw(pDC);
+
+	ReleaseDC(pDC);
+	*/
+
 }
+
+
+void COOP_LSL_GISView::readWHData(FILE *fp)
+{
+	int x1,y1,x2,y2;
+	if(map != NULL)
+		delete map;
+	map = new CGeoMap(1);
+	CGeoLayer *layer = new CGeoLayer;
+	map->addLayer(layer);
+	while( !feof(fp))
+	{
+		//CGeoPolyline *polyline=new CGeoPolyline;
+		CGeoObject *obj=new CGeoPloyline;
+		fscanf(fp,"%d%d%d%d",&x1,&y1,&x2,&y2);
+		x1 = x1+650;
+		x2 = x2+650;
+		//polyline->addPoint(CPoint(x1,y1));
+		//polyline->addPoint(CPoint(x2,y2));
+		//layer->addObject(polyline);
+		((CGeoPloyline*)obj)->addPoint(CPoint(x1,y1));
+		((CGeoPloyline*)obj)->addPoint(CPoint(x2,y2));
+		layer->addObject(obj);
+	}
+	int a = 1;
+}
+
+void COOP_LSL_GISView::readCHData(FILE *fp)
+{
+	int x,y;
+	if(map != NULL)
+		delete map;
+	map = new CGeoMap(1);
+	CGeoLayer *layer = new CGeoLayer;
+	map->addLayer(layer);
+	while( !feof(fp))
+	{
+		//CGeoPoint pt;
+		CGeoObject *obj=new CGeoPoint;
+		fscanf(fp,"%d%d",&x,&y);
+		//pt.setPoint(CPoint(x,y));
+		((CGeoPoint *)obj)->setPoint(CPoint(x,y));
+		//layer->addObject(pt);
+		layer->addObject(obj);
+	}
+}
+
+void COOP_LSL_GISView::readCH1Data(FILE *fp)
+{
+	int x,y;
+	if(map != NULL)
+		delete map;
+	map = new CGeoMap(1);
+
+	CGeoLayer *layer = new CGeoLayer;
+	map->addLayer(layer);
+	while( !feof(fp))
+	{
+		//CGeoPoint pt;
+		CGeoObject *obj=new CGeoPoint;
+		fscanf(fp,"%d%d",&x,&y);
+		//pt.setPoint(CPoint(x,y));
+		((CGeoPoint *)obj)->setPoint(CPoint(x,y));
+		//layer->addObject(pt);
+		layer->addObject(obj);
+	}
+}
+
+
 
 
 // COOP_LSL_GISView 打印
 
 BOOL COOP_LSL_GISView::OnPreparePrinting(CPrintInfo* pInfo)
 {
+
 	// 默认准备
 	return DoPreparePrinting(pInfo);
 }
@@ -116,3 +198,25 @@ COOP_LSL_GISDoc* COOP_LSL_GISView::GetDocument() const // 非调试版本是内联的
 
 
 // COOP_LSL_GISView 消息处理程序
+
+
+void COOP_LSL_GISView::OnFileOpen()
+{
+	CFileDialog fDlg(true);
+	if( fDlg.DoModal()!= IDOK) return;
+	CString fileName = fDlg.GetPathName();
+	USES_CONVERSION;
+	FILE *fp=fopen(T2A(fileName),"r");
+	if(fp==NULL)
+	{
+		return;
+	}
+	if( fileName.Right(9) == "wuhan.txt") //读取武汉线状
+		readWHData(fp);
+	else if( fileName.Right(10) == "china1.txt" )
+		readCHData(fp);
+	else if( fileName.Right(10) == "china1.dat" )
+		readCH1Data(fp);
+	fclose(fp);
+	Invalidate();
+}

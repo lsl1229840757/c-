@@ -4,6 +4,8 @@ class CGeoPoint :
 	public CGeoObject
 {
 public:
+	double x;
+	double y;
 	CGeoPoint(void);
 	~CGeoPoint(void);
 	void setPoint(int x,int y);
@@ -13,5 +15,7 @@ private:
 	CPoint cpt;
 
 
+public:
+	void setXY(double x, double y);
 };
 

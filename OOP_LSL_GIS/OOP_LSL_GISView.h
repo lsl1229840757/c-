@@ -21,6 +21,8 @@ public:
 
 // 操作
 public:
+	
+
 
 // 重写
 public:
@@ -33,6 +35,10 @@ protected:
 
 // 实现
 public:
+	CGeoMap *map;
+	void readCHData(FILE *fp);
+	void readCH1Data(FILE *fp);
+	void readWHData(FILE *fp);
 	virtual ~COOP_LSL_GISView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
@@ -44,6 +50,8 @@ protected:
 // 生成的消息映射函数
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnFileOpen();
 };
 
 #ifndef _DEBUG  // OOP_LSL_GISView.cpp 中的调试版本
