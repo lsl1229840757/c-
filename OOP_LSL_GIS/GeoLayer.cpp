@@ -9,6 +9,10 @@ CGeoLayer::CGeoLayer(void)
 
 CGeoLayer::~CGeoLayer(void)
 {
+	//É¾³ýobjectÖ¸Õë
+	for(int i=0;i<geoObjects.GetSize();i++){
+		delete geoObjects[i];
+	}
 }
 
 void CGeoLayer::Draw(CDC *pDC){

@@ -21,8 +21,7 @@ public:
 
 // 操作
 public:
-	
-
+	boolean isMapLoaded;
 
 // 重写
 public:
@@ -52,6 +51,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnFileOpen();
+	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 };
 
 #ifndef _DEBUG  // OOP_LSL_GISView.cpp 中的调试版本

@@ -34,6 +34,7 @@ COOP_LSL_GISView::COOP_LSL_GISView()
 {
 	// TODO: 在此处添加构造代码
 	map = NULL;
+	isMapLoaded = false;
 }
 
 COOP_LSL_GISView::~COOP_LSL_GISView()
@@ -61,30 +62,8 @@ void COOP_LSL_GISView::OnDraw(CDC* pDC)
 	}
 	if(map != NULL)
 		map->Draw(pDC);
-	/*
-	pDC->SetMapMode(MM_ANISOTROPIC);
-	CPen penBlack;//定义一个画笔变量
-	penBlack.CreatePen(PS_SOLID,2,RGB(0,0,0));//创建画笔
-	CPen *pOldPen=pDC->SelectObject(&penBlack);
-	CPoint p1 = CPoint();
-	p1.x = 10;
-	p1.y = 10;
-	CPoint p2 = CPoint();
-	p2.y = 2000;
-	p2.y = 2000;
-	CGeoPloyline cline = CGeoPloyline();
-	cline.addPoint(p1);
-	cline.addPoint(p2);
-	//cline.Draw(pDC);
-	
-	CGeoPoint cp = CGeoPoint();
-	cp.setPoint(p1);
-	cp.Draw(pDC);
-
-	ReleaseDC(pDC);
-	*/
-
 }
+
 
 void COOP_LSL_GISView::readWHData(FILE *fp)
 {
@@ -108,6 +87,7 @@ void COOP_LSL_GISView::readWHData(FILE *fp)
 		((CGeoPloyline*)obj)->addPoint(CPoint(x2,y2));
 		layer->addObject(obj);
 	}
+	isMapLoaded = true;
 }
 
 void COOP_LSL_GISView::readCHData(FILE *fp)
@@ -128,6 +108,7 @@ void COOP_LSL_GISView::readCHData(FILE *fp)
 		//layer->addObject(pt);
 		layer->addObject(obj);
 	}
+	isMapLoaded = true;
 }
 
 void COOP_LSL_GISView::readCH1Data(FILE *fp)
@@ -135,20 +116,6 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 	if(map != NULL)
 		delete map;
 	map = new CGeoMap(1);
-	/*
-	CGeoLayer *layer = new CGeoLayer;
-	map->addLayer(layer);
-	while( !feof(fp))
-	{
-		//CGeoPoint pt;
-		CGeoObject *obj=new CGeoPoint;
-		fscanf(fp,"%d%d",&x,&y);
-		//pt.setPoint(CPoint(x,y));
-		((CGeoPoint *)obj)->setPoint(CPoint(x,y));
-		//layer->addObject(pt);
-		layer->addObject(obj);
-	}
-	*/
 	// 开始读文件头
 	int left,top,right,bottom;
 	fscanf(fp,"%d,%d",&left,&top);
@@ -160,7 +127,8 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 	CGeoLayer* layers = new CGeoLayer[layerNum];
 	int layerIndex = 0;
 	// 读头文件结束
-	while(!feof(fp)){
+//	while(!feof(fp)){
+	for(int j=0;j<layerNum;j++){
 			//开始读取layer
 			int layerNameSize;
 			fscanf(fp,"%d",&layerNameSize);
@@ -171,28 +139,19 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 			for(int i=0;i<featureNum;i++){
 					int featureType;
 					fscanf(fp,"%d",&featureType);
-					if(featureType==1){
-						int a = 10;
-					}
 					switch (featureType)
 					{
 					case 1:
 						//这是线
 						while(!feof(fp)){
-							int x1,y1,x2,y2;
+							int x1,y1;
 							CGeoObject *obj=new CGeoPloyline;
 							fscanf(fp,"%d,%d",&x1,&y1);
-							if(x1==-99999){
+							if(x1==-99999&&y1==-99999){
+								(layers+layerIndex)->addObject(obj);
 								break;
 							}
-							x1 = x1/1000;
-							y1 = y1/1000;
-							fscanf(fp,"%d,%d",&x2,&y2);
-							x2 = x2/1000;
-							y2 = y2/1000;
 							((CGeoPloyline*)obj)->addPoint(CPoint(x1,y1));
-							((CGeoPloyline*)obj)->addPoint(CPoint(x2,y2));
-							(layers+layerIndex)->addObject(obj);
 						}
 						break;
 					case 2:
@@ -201,11 +160,9 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 							int x,y;
 							CGeoObject *obj=new CGeoPoint;
 							fscanf(fp,"%d,%d",&x,&y);
-							if(x==-99999){
+							if(x==-99999&&y==-99999){
 								break;
 							}
-							x = x/1000;
-							y = y/1000;
 							((CGeoPoint *)obj)->setPoint(CPoint(x,y));
 							(layers+layerIndex)->addObject(obj);
 						}
@@ -222,10 +179,12 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 					}
 			}
 			layerIndex++;
-	}
+		}
+	//}
 	for(int i =0;i<layerNum;i++){
 		map->addLayer((layers+i));
 	}
+	isMapLoaded = true;
 }
 
 // COOP_LSL_GISView 打印
@@ -291,4 +250,31 @@ void COOP_LSL_GISView::OnFileOpen()
 		readCH1Data(fp);
 	fclose(fp);
 	Invalidate();
+}
+
+
+void COOP_LSL_GISView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
+{
+	if( !isMapLoaded ) 
+		return;
+	CSize size; 
+	CPoint pt;	
+	CRect rectD;
+	double ratio = 0.8; // 宽度缩放比例
+	this->GetClientRect(&rectD);//取得客户区矩形区域大小
+	size = rectD.Size();
+	pt = rectD.CenterPoint();//取得客户区矩形区域中心点坐标
+	CRect mcr = map->getRect();
+
+	pDC->SetMapMode(MM_ANISOTROPIC); //设置指定设备环境的映射方式
+	size.SetSize(size.cx*ratio,size.cy);
+	pDC->SetViewportExt(size);  //设定视口尺寸
+	pDC->SetViewportOrg(pt); //设置视口中心为坐标系原点
+	
+	size = (map->getRect()).Size();  //设定窗口对应尺寸
+	pt =  (map->getRect()).CenterPoint(); //设置窗口中心为对应原点
+	pDC->SetWindowExt(size);   //设置窗口长宽
+	pDC->SetWindowOrg(pt);	//设置窗口原点
+
+	CView::OnPrepareDC(pDC, pInfo);
 }
