@@ -57,6 +57,9 @@
     <ClInclude Include="GeoAnno.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GeoPolygon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OOP_LSL_GIS.cpp">
@@ -90,6 +93,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GeoAnno.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GeoPolygon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

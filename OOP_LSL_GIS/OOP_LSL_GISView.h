@@ -8,7 +8,7 @@
 #include "GeoMap.h"
 #include "GeoPoint.h"
 #include "GeoPloyline.h"
-
+#include "GeoPolygon.h"
 class COOP_LSL_GISView : public CView
 {
 protected: // 仅从序列化创建

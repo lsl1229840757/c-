@@ -67,6 +67,7 @@ void COOP_LSL_GISView::OnDraw(CDC* pDC)
 
 void COOP_LSL_GISView::readWHData(FILE *fp)
 {
+	isMapLoaded = false;
 	int x1,y1,x2,y2;
 	if(map != NULL)
 		delete map;
@@ -87,11 +88,11 @@ void COOP_LSL_GISView::readWHData(FILE *fp)
 		((CGeoPloyline*)obj)->addPoint(CPoint(x2,y2));
 		layer->addObject(obj);
 	}
-	isMapLoaded = true;
 }
 
 void COOP_LSL_GISView::readCHData(FILE *fp)
 {
+	isMapLoaded = false;
 	int x,y;
 	if(map != NULL)
 		delete map;
@@ -108,7 +109,6 @@ void COOP_LSL_GISView::readCHData(FILE *fp)
 		//layer->addObject(pt);
 		layer->addObject(obj);
 	}
-	isMapLoaded = true;
 }
 
 void COOP_LSL_GISView::readCH1Data(FILE *fp)
@@ -124,8 +124,7 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 	int layerNum;
 	fscanf(fp,"%d",&layerNum);
 	// 创建layer指针
-	CGeoLayer* layers = new CGeoLayer[layerNum];
-	int layerIndex = 0;
+	CGeoLayer *layers = new CGeoLayer[layerNum];
 	// 读头文件结束
 //	while(!feof(fp)){
 	for(int j=0;j<layerNum;j++){
@@ -139,46 +138,69 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 			for(int i=0;i<featureNum;i++){
 					int featureType;
 					fscanf(fp,"%d",&featureType);
+					//if(featureType==1){
+					////这是线
+					//	CGeoObject *obj = new CGeoPloyline;
+					//	while(!feof(fp)){
+					//		int x1,y1;
+					//		fscanf(fp,"%d,%d",&x1,&y1);
+					//		if(x1==-99999&&y1==-99999){
+					//			(layers+j)->addObject(obj);
+					//			break;
+					//		}
+					//		((CGeoPloyline*)obj)->addPoint(CPoint(x1,y1));
+					//	}
+					//}else if(featureType==2){
+					//	//这是面
+					//	CGeoObject *obj = new CGeoPolygon;
+					//	while(!feof(fp)){
+					//		int x,y;
+					//		fscanf(fp,"%d,%d",&x,&y);
+					//		if(x==-99999&&y==-99999){
+					//			(layers+j)->addObject(obj);
+					//			break;
+					//		}
+					//		((CGeoPolygon *)obj)->addPoint(CPoint(x,y));
+					//	}
+					//}else{
+					//
+					//}
+					CGeoObject *obj;
 					switch (featureType)
 					{
 					case 1:
 						//这是线
+						obj = new CGeoPloyline;
 						while(!feof(fp)){
 							int x1,y1;
-							CGeoObject *obj=new CGeoPloyline;
 							fscanf(fp,"%d,%d",&x1,&y1);
 							if(x1==-99999&&y1==-99999){
-								(layers+layerIndex)->addObject(obj);
+								(layers+j)->addObject(obj);
 								break;
 							}
 							((CGeoPloyline*)obj)->addPoint(CPoint(x1,y1));
 						}
 						break;
 					case 2:
-						//这是点
+						//这是面
+						obj = new CGeoPolygon;
 						while(!feof(fp)){
 							int x,y;
-							CGeoObject *obj=new CGeoPoint;
 							fscanf(fp,"%d,%d",&x,&y);
 							if(x==-99999&&y==-99999){
+								(layers+j)->addObject(obj);
 								break;
 							}
-							((CGeoPoint *)obj)->setPoint(CPoint(x,y));
-							(layers+layerIndex)->addObject(obj);
+							((CGeoPolygon *)obj)->addPoint(CPoint(x,y));
 						}
 						break;
 					case 4:
 						//这是注记
-						char name[20];
-						fscanf(fp,"%s",&name);
-						int x;
-						fscanf(fp,"%d",&x);
 						break;
 					default:
 						break;
 					}
 			}
-			layerIndex++;
 		}
 	//}
 	for(int i =0;i<layerNum;i++){

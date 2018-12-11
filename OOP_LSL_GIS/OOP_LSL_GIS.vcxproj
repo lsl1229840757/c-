@@ -107,6 +107,7 @@
     <ClInclude Include="GeoObject.h" />
     <ClInclude Include="GeoPloyline.h" />
     <ClInclude Include="GeoPoint.h" />
+    <ClInclude Include="GeoPolygon.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OOP_LSL_GIS.h" />
     <ClInclude Include="OOP_LSL_GISDoc.h" />
@@ -122,6 +123,7 @@
     <ClCompile Include="GeoObject.cpp" />
     <ClCompile Include="GeoPloyline.cpp" />
     <ClCompile Include="GeoPoint.cpp" />
+    <ClCompile Include="GeoPolygon.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OOP_LSL_GIS.cpp" />
     <ClCompile Include="OOP_LSL_GISDoc.cpp" />

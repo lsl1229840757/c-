@@ -15,7 +15,7 @@ CGeoMap::~CGeoMap(void)
 {
 	//É¾³ılayerÖ¸Õë
 	for(int i=0;i<geoLayers.GetSize();i++){
-		delete geoLayers[i];
+			delete geoLayers[i];
 	}
 }
 

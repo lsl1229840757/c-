@@ -11,7 +11,7 @@ CGeoLayer::~CGeoLayer(void)
 {
 	//É¾³ıobjectÖ¸Õë
 	for(int i=0;i<geoObjects.GetSize();i++){
-		delete geoObjects[i];
+			delete[] geoObjects[i];
 	}
 }
 
