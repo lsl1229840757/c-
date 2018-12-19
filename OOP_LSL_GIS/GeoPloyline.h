@@ -14,4 +14,3 @@ public:
 	int getSize();
 	void Draw(CDC* pDC);
 };
-

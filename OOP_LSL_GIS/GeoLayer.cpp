@@ -11,7 +11,7 @@ CGeoLayer::~CGeoLayer(void)
 {
 	//É¾³ýobjectÖ¸Õë
 	for(int i=0;i<geoObjects.GetSize();i++){
-			delete[] geoObjects[i];
+			delete geoObjects[i];
 	}
 }
 
@@ -30,4 +30,13 @@ void CGeoLayer::delObjectAt(int idx){
 }
 void CGeoLayer::delObjectAll(){
 	geoObjects.RemoveAll();
+}
+void CGeoLayer::setName(CString name){
+	this->Name = name;
+}
+CString CGeoLayer::getName(){
+	return this->Name;
+}
+CArray<CGeoObject *,CGeoObject *>& CGeoLayer::getObjects(){
+	return this->geoObjects;
 }

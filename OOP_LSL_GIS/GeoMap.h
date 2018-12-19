@@ -20,8 +20,7 @@ public:
 	void setRect(CRect rect);
 	CRect getRect();
 	void addLayer(CGeoLayer *layer);
-
-
+	CGeoLayer* getLayerByName(CString name);
 private:
 	CString Name; //Ãû×Ö
 

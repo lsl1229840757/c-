@@ -10,7 +10,9 @@ public:
 	void delObjectAt(int idx);
 	void delObjectAll();
 	void Draw(CDC *pDC);
-
+	void setName(CString name);
+	CString CGeoLayer::getName();
+	CArray<CGeoObject *,CGeoObject *>& getObjects();
 private:
 	CString Name;
 	// 地理目标数组

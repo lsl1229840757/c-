@@ -11,14 +11,17 @@ CGeoPolygon::~CGeoPolygon(void)
 {
 }
 void CGeoPolygon::Draw(CDC* pDC){
-	for (int i = 0; i < pts.GetSize(); i++)
+	CBrush brush;
+	brush.CreateSolidBrush(RGB(r,g,b));
+	CBrush *oldBrush = pDC->SelectObject(&brush);
+	int size = pts.GetSize();
+	POINT *point = new POINT[size];
+	for(int i=0;i<size;i++)
 	{
-		if(i==0){
-			pDC->MoveTo(pts[i]);
-		}else{
-			pDC->LineTo(pts[i]);
-		}
+		point[i] = pts[i];
 	}
+	//pDC->SelectObject(oldBrush);
+	pDC->Polygon(point,size);
 }
 int CGeoPolygon::getSize(){
 	return pts.GetSize();

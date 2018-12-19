@@ -53,3 +53,10 @@ void CGeoMap::delLayerAt(int idx){
 void CGeoMap::delLayerAll(){
 	geoLayers.RemoveAll();
 }
+CGeoLayer* CGeoMap::getLayerByName(CString name){
+	for(int i=0;i<geoLayers.GetSize();i++){
+		if(!name.Compare(geoLayers[i]->getName())){
+			return geoLayers[i];
+		}
+	}
+}

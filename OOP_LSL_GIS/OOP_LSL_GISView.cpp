@@ -26,6 +26,8 @@ BEGIN_MESSAGE_MAP(COOP_LSL_GISView, CView)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
 	ON_COMMAND(ID_FILE_OPEN, &COOP_LSL_GISView::OnFileOpen)
+	ON_WM_LBUTTONUP()
+	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // COOP_LSL_GISView 构造/析构
@@ -35,6 +37,7 @@ COOP_LSL_GISView::COOP_LSL_GISView()
 	// TODO: 在此处添加构造代码
 	map = NULL;
 	isMapLoaded = false;
+	clickNum = 0;
 }
 
 COOP_LSL_GISView::~COOP_LSL_GISView()
@@ -60,8 +63,48 @@ void COOP_LSL_GISView::OnDraw(CDC* pDC)
 	if (!pDoc){
 		return;
 	}
-	if(map != NULL)
+	if(map != NULL){
 		map->Draw(pDC);
+	}
+}
+
+void COOP_LSL_GISView::readCH1OPTD(FILE *fp){
+	if(isMapLoaded == true){
+		int totalNum;
+		fscanf(fp,"%d",&totalNum);
+		for(int i=0;i<totalNum;i++){
+			char str[30];
+			fscanf(fp,"%s",&str);
+			CString layerName;
+			layerName = str;
+			CGeoLayer *layer = map->getLayerByName(layerName);
+			int hasLine;
+			fscanf(fp,"%d",&hasLine);
+			if(hasLine==1){
+				double lineWidth;
+				fscanf(fp,"%lf",&lineWidth);
+				int r,g,b;
+				fscanf(fp,"%d, %d, %d",&r,&g,&b);
+				for(int i=0;i<layer->getObjects().GetSize();i++){
+					(layer->getObjects())[i]->r = r;
+					(layer->getObjects())[i]->g = g;	
+					(layer->getObjects())[i]->b = b;
+					(layer->getObjects())[i]->lineWidth = lineWidth;
+				}
+			}
+			int hasPolygon;
+			fscanf(fp,"%d",&hasPolygon);
+			if(hasPolygon==1){
+				int r,g,b;
+				fscanf(fp,"%d, %d, %d",&r,&g,&b);
+				for(int i=0;i<layer->getObjects().GetSize();i++){
+					(layer->getObjects())[i]->r = r;
+					(layer->getObjects())[i]->g = g;	
+					(layer->getObjects())[i]->b = b;
+				}
+			}
+		}
+	}
 }
 
 
@@ -81,9 +124,6 @@ void COOP_LSL_GISView::readWHData(FILE *fp)
 		fscanf(fp,"%d%d%d%d",&x1,&y1,&x2,&y2);
 		x1 = x1+650;
 		x2 = x2+650;
-		//polyline->addPoint(CPoint(x1,y1));
-		//polyline->addPoint(CPoint(x2,y2));
-		//layer->addObject(polyline);
 		((CGeoPloyline*)obj)->addPoint(CPoint(x1,y1));
 		((CGeoPloyline*)obj)->addPoint(CPoint(x2,y2));
 		layer->addObject(obj);
@@ -101,12 +141,9 @@ void COOP_LSL_GISView::readCHData(FILE *fp)
 	map->addLayer(layer);
 	while( !feof(fp))
 	{
-		//CGeoPoint pt;
 		CGeoObject *obj=new CGeoPoint;
 		fscanf(fp,"%d%d",&x,&y);
-		//pt.setPoint(CPoint(x,y));
 		((CGeoPoint *)obj)->setPoint(CPoint(x,y));
-		//layer->addObject(pt);
 		layer->addObject(obj);
 	}
 }
@@ -126,45 +163,20 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 	// 创建layer指针
 	CGeoLayer *layers = new CGeoLayer[layerNum];
 	// 读头文件结束
-//	while(!feof(fp)){
 	for(int j=0;j<layerNum;j++){
 			//开始读取layer
 			int layerNameSize;
 			fscanf(fp,"%d",&layerNameSize);
-			char layerName[20];
-			fscanf(fp,"%s",&layerName);
+			char str[30];
+			fscanf(fp,"%s",&str);
+			CString layerName;
+			layerName = str;
+			(layers+j)->setName(layerName);
 			int featureNum;
 			fscanf(fp,"%d",&featureNum);
 			for(int i=0;i<featureNum;i++){
 					int featureType;
 					fscanf(fp,"%d",&featureType);
-					//if(featureType==1){
-					////这是线
-					//	CGeoObject *obj = new CGeoPloyline;
-					//	while(!feof(fp)){
-					//		int x1,y1;
-					//		fscanf(fp,"%d,%d",&x1,&y1);
-					//		if(x1==-99999&&y1==-99999){
-					//			(layers+j)->addObject(obj);
-					//			break;
-					//		}
-					//		((CGeoPloyline*)obj)->addPoint(CPoint(x1,y1));
-					//	}
-					//}else if(featureType==2){
-					//	//这是面
-					//	CGeoObject *obj = new CGeoPolygon;
-					//	while(!feof(fp)){
-					//		int x,y;
-					//		fscanf(fp,"%d,%d",&x,&y);
-					//		if(x==-99999&&y==-99999){
-					//			(layers+j)->addObject(obj);
-					//			break;
-					//		}
-					//		((CGeoPolygon *)obj)->addPoint(CPoint(x,y));
-					//	}
-					//}else{
-					//
-					//}
 					CGeoObject *obj;
 					switch (featureType)
 					{
@@ -202,7 +214,6 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 					}
 			}
 		}
-	//}
 	for(int i =0;i<layerNum;i++){
 		map->addLayer((layers+i));
 	}
@@ -258,6 +269,7 @@ void COOP_LSL_GISView::OnFileOpen()
 	CFileDialog fDlg(true);
 	if( fDlg.DoModal()!= IDOK) return;
 	CString fileName = fDlg.GetPathName();
+
 	USES_CONVERSION;
 	FILE *fp=fopen(T2A(fileName),"r");
 	if(fp==NULL)
@@ -270,6 +282,8 @@ void COOP_LSL_GISView::OnFileOpen()
 		readCHData(fp);
 	else if( fileName.Right(10) == "china1.dat" ) //测试数据
 		readCH1Data(fp);
+	else if(fileName.Right(10) == "china1.opt")
+		readCH1OPTD(fp);	
 	fclose(fp);
 	Invalidate();
 }
@@ -279,24 +293,65 @@ void COOP_LSL_GISView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 {
 	if( !isMapLoaded ) 
 		return;
-	CSize size; 
+	CSize size;
+	CSize size2;
 	CPoint pt;	
-	CRect rectD;
 	double ratio = 0.8; // 宽度缩放比例
 	this->GetClientRect(&rectD);//取得客户区矩形区域大小
 	size = rectD.Size();
 	pt = rectD.CenterPoint();//取得客户区矩形区域中心点坐标
-	CRect mcr = map->getRect();
 
 	pDC->SetMapMode(MM_ANISOTROPIC); //设置指定设备环境的映射方式
-	size.SetSize(size.cx*ratio,size.cy);
+	size.SetSize(size.cx*ratio,size.cy*ratio);
 	pDC->SetViewportExt(size);  //设定视口尺寸
+	viewSize = size;
 	pDC->SetViewportOrg(pt); //设置视口中心为坐标系原点
+	viewPoint = pt;
 	
-	size = (map->getRect()).Size();  //设定窗口对应尺寸
+	size2 = (map->getRect()).Size();  //设定窗口对应尺寸
+	winSize = size2;
 	pt =  (map->getRect()).CenterPoint(); //设置窗口中心为对应原点
-	pDC->SetWindowExt(size);   //设置窗口长宽
+	winPoint = pt;
+	pDC->SetWindowExt(size2);   //设置窗口长宽
 	pDC->SetWindowOrg(pt);	//设置窗口原点
 
-	CView::OnPrepareDC(pDC, pInfo);
+	CSize size3 = pDC->GetWindowExt();
+}
+
+
+void COOP_LSL_GISView::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	if (isMapLoaded == false)
+		return;
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CRect rc;
+	this->GetClientRect(&rc);
+	if(!rc.PtInRect(point))
+		return;
+	clickNum++;
+	if(clickNum==2){
+		upPoint = point;
+		CRect rect = CRect(downPoint,upPoint);
+		CDC* pDC = GetDC();
+		CPoint downCPoint = CPoint((downPoint.x-viewPoint.x)*(winSize.cx/viewSize.cx)+winPoint.x,(downPoint.y-viewPoint.y)*(winSize.cy/viewSize.cy)+winPoint.y);
+		CPoint upCPoint = CPoint((upPoint.x-viewPoint.x)*(winSize.cx/viewSize.cx)+winPoint.x,(upPoint.y-viewPoint.y)*(winSize.cy/viewSize.cy)+winPoint.y);
+		rc = CRect(downCPoint,upCPoint);
+		winSize = rc.Size();
+		winPoint = rc.CenterPoint();
+		map->crRect = rc;
+		Invalidate();
+	}
+}
+
+
+void COOP_LSL_GISView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	if(isMapLoaded==false)
+		return;
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	clickNum = 0;
+	clickNum++;
+	if(clickNum==1){
+		downPoint = point;
+	}
 }
