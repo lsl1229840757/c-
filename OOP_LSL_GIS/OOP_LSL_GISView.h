@@ -34,11 +34,8 @@ protected:
 
 // 实现
 public:
-	CSize winSize;
-	CPoint winPoint;
-	CSize viewSize;
-	CPoint viewPoint;
-
+	bool isZoomIn;
+	CRect winRect;
 	CRect rectD;
 	CPoint downPoint;
 	CPoint upPoint;
@@ -64,6 +61,12 @@ public:
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+//	afx_msg void OnZoomin();
+//	afx_msg void OnAfxIdPreviewZoomin();
+	afx_msg void OnZoomin();
+	afx_msg void OnUpdateZoomin(CCmdUI *pCmdUI);
+	afx_msg void OnFullview();
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // OOP_LSL_GISView.cpp 中的调试版本

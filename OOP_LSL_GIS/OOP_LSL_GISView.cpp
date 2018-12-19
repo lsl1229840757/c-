@@ -28,6 +28,12 @@ BEGIN_MESSAGE_MAP(COOP_LSL_GISView, CView)
 	ON_COMMAND(ID_FILE_OPEN, &COOP_LSL_GISView::OnFileOpen)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
+//	ON_COMMAND(ZoomIn, &COOP_LSL_GISView::OnZoomin)
+//	ON_COMMAND(AFX_ID_PREVIEW_ZOOMIN, &COOP_LSL_GISView::OnAfxIdPreviewZoomin)
+ON_COMMAND(ZoomIn, &COOP_LSL_GISView::OnZoomin)
+ON_UPDATE_COMMAND_UI(ZoomIn, &COOP_LSL_GISView::OnUpdateZoomin)
+ON_COMMAND(FullView, &COOP_LSL_GISView::OnFullview)
+ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 // COOP_LSL_GISView 构造/析构
@@ -38,6 +44,7 @@ COOP_LSL_GISView::COOP_LSL_GISView()
 	map = NULL;
 	isMapLoaded = false;
 	clickNum = 0;
+	isZoomIn = false;
 }
 
 COOP_LSL_GISView::~COOP_LSL_GISView()
@@ -217,6 +224,7 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 	for(int i =0;i<layerNum;i++){
 		map->addLayer((layers+i));
 	}
+	winRect = map->crRect;
 	isMapLoaded = true;
 }
 
@@ -296,22 +304,18 @@ void COOP_LSL_GISView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 	CSize size;
 	CSize size2;
 	CPoint pt;	
-	double ratio = 0.8; // 宽度缩放比例
+	double ratio = 0.6; // 宽度缩放比例
 	this->GetClientRect(&rectD);//取得客户区矩形区域大小
 	size = rectD.Size();
 	pt = rectD.CenterPoint();//取得客户区矩形区域中心点坐标
 
 	pDC->SetMapMode(MM_ANISOTROPIC); //设置指定设备环境的映射方式
-	size.SetSize(size.cx*ratio,size.cy*ratio);
+	size.SetSize(size.cx*0.4,size.cy*ratio);
 	pDC->SetViewportExt(size);  //设定视口尺寸
-	viewSize = size;
 	pDC->SetViewportOrg(pt); //设置视口中心为坐标系原点
-	viewPoint = pt;
-	
-	size2 = (map->getRect()).Size();  //设定窗口对应尺寸
-	winSize = size2;
-	pt =  (map->getRect()).CenterPoint(); //设置窗口中心为对应原点
-	winPoint = pt;
+
+	size2 = winRect.Size();  //设定窗口对应尺寸
+	pt =  winRect.CenterPoint(); //设置窗口中心为对应原点
 	pDC->SetWindowExt(size2);   //设置窗口长宽
 	pDC->SetWindowOrg(pt);	//设置窗口原点
 
@@ -323,6 +327,8 @@ void COOP_LSL_GISView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (isMapLoaded == false)
 		return;
+	if(isZoomIn==false)
+		return;
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	CRect rc;
 	this->GetClientRect(&rc);
@@ -331,14 +337,16 @@ void COOP_LSL_GISView::OnLButtonUp(UINT nFlags, CPoint point)
 	clickNum++;
 	if(clickNum==2){
 		upPoint = point;
-		CRect rect = CRect(downPoint,upPoint);
 		CDC* pDC = GetDC();
-		CPoint downCPoint = CPoint((downPoint.x-viewPoint.x)*(winSize.cx/viewSize.cx)+winPoint.x,(downPoint.y-viewPoint.y)*(winSize.cy/viewSize.cy)+winPoint.y);
-		CPoint upCPoint = CPoint((upPoint.x-viewPoint.x)*(winSize.cx/viewSize.cx)+winPoint.x,(upPoint.y-viewPoint.y)*(winSize.cy/viewSize.cy)+winPoint.y);
-		rc = CRect(downCPoint,upCPoint);
-		winSize = rc.Size();
-		winPoint = rc.CenterPoint();
-		map->crRect = rc;
+		OnPrepareDC(pDC);
+		pDC -> DPtoLP(&downPoint);
+		pDC -> DPtoLP(&upPoint);
+		int xmax = downPoint.x>upPoint.x?downPoint.x:upPoint.x;
+		int ymax = downPoint.y>upPoint.y?downPoint.y:upPoint.y;
+		int xmin = downPoint.x<upPoint.x?downPoint.x:upPoint.x;
+		int ymin = downPoint.y<upPoint.y?downPoint.y:upPoint.y;
+		rc = CRect(xmin,ymax,xmax,ymin);
+		winRect = rc;
 		Invalidate();
 	}
 }
@@ -348,10 +356,46 @@ void COOP_LSL_GISView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if(isMapLoaded==false)
 		return;
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	clickNum = 0;
+	if(isZoomIn==false)
+		return;
+	clickNum=0;
 	clickNum++;
 	if(clickNum==1){
 		downPoint = point;
 	}
+}
+
+void COOP_LSL_GISView::OnZoomin()
+{
+	// TODO: 在此添加命令处理程序代码SL
+	if (isZoomIn == false){
+		isZoomIn = true;
+	}
+	else if(isZoomIn == true){
+		isZoomIn = false;
+	}
+}
+void COOP_LSL_GISView::OnUpdateZoomin(CCmdUI *pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(isZoomIn==true);
+}
+
+
+void COOP_LSL_GISView::OnFullview()
+{
+	winRect = map->crRect;
+	Invalidate();
+}
+
+
+void COOP_LSL_GISView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if(!(clickNum==1))
+		return;
+	CDC *pDC = GetDC();
+	pDC->SetROP2(R2_NOTXORPEN);
+	pDC->Rectangle(downPoint.x,downPoint.y,point.x,point.y);
+	upPoint = point;
+	pDC->Rectangle(downPoint.x,downPoint.y,upPoint.x,upPoint.y);
 }

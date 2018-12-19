@@ -17,6 +17,7 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
+//	ON_COMMAND(ZoomIn, &CMainFrame::OnZoomin)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -92,4 +93,6 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 
 // CMainFrame 消息处理程序
+
+
 
