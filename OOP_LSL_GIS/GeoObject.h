@@ -3,7 +3,7 @@ class CGeoObject
 {
 public:
 	CGeoObject(void);
-	~CGeoObject(void);
+	virtual ~CGeoObject(void);
 	CRect crRect;// Íâ½ç¾ØÐÎ
 	void setName(CString Name);
 	CString getName();

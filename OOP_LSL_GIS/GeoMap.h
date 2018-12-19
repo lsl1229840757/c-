@@ -5,6 +5,7 @@ class CGeoMap
 public:
 	CGeoMap(void);
 	~CGeoMap(void);
+	CGeoMap(CGeoMap& map);
 	CGeoMap(int Scale);
 	const int Scale; // µØÍ¼±ÈÀý³ß
 	CRect crRect;// µØÍ¼·¶Î§

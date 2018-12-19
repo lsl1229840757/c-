@@ -167,10 +167,11 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 	map->setRect(CRect(left,top,right,bottom));
 	int layerNum;
 	fscanf(fp,"%d",&layerNum);
-	// 创建layer指针
-	CGeoLayer *layers = new CGeoLayer[layerNum];
+	//创建layer指针
+	//CGeoLayer *layers = new CGeoLayer[layerNum];
 	// 读头文件结束
 	for(int j=0;j<layerNum;j++){
+			CGeoLayer *layers = new CGeoLayer;
 			//开始读取layer
 			int layerNameSize;
 			fscanf(fp,"%d",&layerNameSize);
@@ -178,7 +179,7 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 			fscanf(fp,"%s",&str);
 			CString layerName;
 			layerName = str;
-			(layers+j)->setName(layerName);
+			layers->setName(layerName);
 			int featureNum;
 			fscanf(fp,"%d",&featureNum);
 			for(int i=0;i<featureNum;i++){
@@ -194,7 +195,7 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 							int x1,y1;
 							fscanf(fp,"%d,%d",&x1,&y1);
 							if(x1==-99999&&y1==-99999){
-								(layers+j)->addObject(obj);
+								layers->addObject(obj);
 								break;
 							}
 							((CGeoPloyline*)obj)->addPoint(CPoint(x1,y1));
@@ -207,7 +208,7 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 							int x,y;
 							fscanf(fp,"%d,%d",&x,&y);
 							if(x==-99999&&y==-99999){
-								(layers+j)->addObject(obj);
+								layers->addObject(obj);
 								break;
 							}
 							((CGeoPolygon *)obj)->addPoint(CPoint(x,y));
@@ -220,10 +221,8 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 						break;
 					}
 			}
+			map->addLayer(layers);
 		}
-	for(int i =0;i<layerNum;i++){
-		map->addLayer((layers+i));
-	}
 	winRect = map->crRect;
 	isMapLoaded = true;
 }

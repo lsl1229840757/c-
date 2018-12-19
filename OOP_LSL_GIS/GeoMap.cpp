@@ -5,17 +5,15 @@
 CGeoMap::CGeoMap(int Scale):Scale(Scale)
 {
 }
-/*
-CGeoMap::CGeoMap()
+CGeoMap::CGeoMap(CGeoMap& map):Scale(1)
 {
-
+	
 }
-*/
 CGeoMap::~CGeoMap(void)
 {
 	//É¾³ýlayerÖ¸Õë
 	for(int i=0;i<geoLayers.GetSize();i++){
-			delete geoLayers[i];
+		delete geoLayers[i];
 	}
 }
 
