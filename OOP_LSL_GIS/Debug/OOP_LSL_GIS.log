@@ -1,28 +1,10 @@
-﻿生成启动时间为 2018-12-19 23:25:18。
-     1>项目“D:\VsWorkSpace\OOP_LSL_GIS\OOP_LSL_GIS\OOP_LSL_GIS.vcxproj”在节点 2 上(Rebuild 个目标)。
+﻿生成启动时间为 2018-12-24 21:40:20。
+     1>项目“D:\VsWorkSpace\OOP_LSL_GIS\OOP_LSL_GIS\OOP_LSL_GIS.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
-         D:\VS2012\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\OOP_LSL_GIS.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
-         stdafx.cpp
-         D:\VS2012\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OOP_LSL_GIS.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt GeoAnno.cpp GeoLayer.cpp GeoMap.cpp GeoObject.cpp GeoPloyline.cpp GeoPoint.cpp GeoPolygon.cpp MainFrm.cpp OOP_LSL_GIS.cpp OOP_LSL_GISDoc.cpp OOP_LSL_GISView.cpp
+         D:\VS2012\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OOP_LSL_GIS.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt OOP_LSL_GISView.cpp
          OOP_LSL_GISView.cpp
      1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.cpp(79): warning C4805: “==”: 在操作中将类型“boolean”与类型“bool”混合不安全
-     1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.cpp(312): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
-         OOP_LSL_GISDoc.cpp
-         OOP_LSL_GIS.cpp
-         MainFrm.cpp
-         GeoPolygon.cpp
-         GeoPoint.cpp
-         GeoPloyline.cpp
-     1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\geoployline.cpp(15): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
-         GeoObject.cpp
-         GeoMap.cpp
-         GeoLayer.cpp
-         GeoAnno.cpp
-         正在生成代码...
-     1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\geomap.cpp(60): warning C4715: “CGeoMap::getLayerByName”: 不是所有的控件路径都返回值
-     1>cl : 命令行 warning D9028: 最小重新生成失败，正在转换为标准生成
-       ResourceCompile:
-         C:\Program Files (x86)\Windows Kits\8.0\bin\x86\rc.exe /D _DEBUG /D _UNICODE /D UNICODE /D _AFXDLL /l"0x0804" /IDebug\ /nologo /fo"Debug\OOP_LSL_GIS.res" OOP_LSL_GIS.rc 
+     1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.cpp(314): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
        Link:
          D:\VS2012\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\VsWorkSpace\OOP_LSL_GIS\Debug\OOP_LSL_GIS.exe" /INCREMENTAL /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:D:\VS2012\VC\Include\Manifest\dpiaware.manifest /DEBUG /PDB:"D:\VsWorkSpace\OOP_LSL_GIS\Debug\OOP_LSL_GIS.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /ENTRY:"wWinMainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\VsWorkSpace\OOP_LSL_GIS\Debug\OOP_LSL_GIS.lib" /MACHINE:X86 Debug\OOP_LSL_GIS.res
          Debug\GeoAnno.obj
@@ -38,8 +20,8 @@
          Debug\OOP_LSL_GISView.obj
          Debug\stdafx.obj
          OOP_LSL_GIS.vcxproj -> D:\VsWorkSpace\OOP_LSL_GIS\Debug\OOP_LSL_GIS.exe
-     1>已完成生成项目“D:\VsWorkSpace\OOP_LSL_GIS\OOP_LSL_GIS\OOP_LSL_GIS.vcxproj”(Rebuild 个目标)的操作。
+     1>已完成生成项目“D:\VsWorkSpace\OOP_LSL_GIS\OOP_LSL_GIS\OOP_LSL_GIS.vcxproj”(Build 个目标)的操作。
 
 生成成功。
 
-已用时间 00:00:10.52
+已用时间 00:00:00.90

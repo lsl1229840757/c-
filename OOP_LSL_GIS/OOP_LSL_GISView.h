@@ -9,6 +9,8 @@
 #include "GeoPoint.h"
 #include "GeoPloyline.h"
 #include "GeoPolygon.h"
+
+#pragma warning(disable:4996)
 class COOP_LSL_GISView : public CView
 {
 protected: // 仅从序列化创建
@@ -67,6 +69,7 @@ public:
 	afx_msg void OnUpdateZoomin(CCmdUI *pCmdUI);
 	afx_msg void OnFullview();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	void readExcel(CString path);
 };
 
 #ifndef _DEBUG  // OOP_LSL_GISView.cpp 中的调试版本

@@ -291,6 +291,8 @@ void COOP_LSL_GISView::OnFileOpen()
 		readCH1Data(fp);
 	else if(fileName.Right(10) == "china1.opt")
 		readCH1OPTD(fp);	
+	else if(fileName.Right(12) == "chnCity.xlsx")
+		readExcel(fileName);
 	fclose(fp);
 	Invalidate();
 }
@@ -397,4 +399,61 @@ void COOP_LSL_GISView::OnMouseMove(UINT nFlags, CPoint point)
 	pDC->Rectangle(downPoint.x,downPoint.y,point.x,point.y);
 	upPoint = point;
 	pDC->Rectangle(downPoint.x,downPoint.y,upPoint.x,upPoint.y);
+}
+
+
+void COOP_LSL_GISView::readExcel(CString path)
+{
+	CoInitialize(NULL);   //初始化COM组件
+	_ConnectionPtr connection;
+	try
+    {
+		CString strPath;
+		CString str1;
+		CString str2;
+		str1 = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source=";
+		str2 = ";Extended Properties='Excel 8.0;HDR=Yes;IMEX=2'";
+		strPath = str1+path+str2;
+        connection.CreateInstance(__uuidof(Connection));   //创建Connection对象
+        connection->Open(_bstr_t(strPath), "", "", adModeUnknown);
+    }
+    catch (_com_error e)
+    {
+		MessageBox(e.ErrorMessage());
+	}
+	_RecordsetPtr pRecordset;
+    char szSQL[] = "Select * From [Sheet1$]";
+	try
+    {
+        pRecordset.CreateInstance(__uuidof(Recordset));	//创建Recordset对象
+        pRecordset->Open(_bstr_t(szSQL), _variant_t((IDispatch*)connection, TRUE),
+            adOpenUnspecified, adLockUnspecified, adCmdUnknown);
+    }
+    catch (_com_error e)
+    {
+        connection->Close();
+    }
+	if (pRecordset == NULL)
+    {
+        connection->Close();
+    }
+
+	  if (!pRecordset->BOF)
+    {
+        try
+        {
+            pRecordset->MoveFirst();
+			while (!pRecordset->adoEOF)
+            {
+                _variant_t vtName = pRecordset->Fields->GetItem("Name")->Value;
+                _variant_t vtX = pRecordset->Fields->GetItem("X")->Value;
+				 _variant_t vtY = pRecordset->Fields->GetItem("Y")->Value;
+                pRecordset->MoveNext();
+            }
+        }
+        catch (_com_error e)
+        {
+			e.Error();
+        }
+	}
 }

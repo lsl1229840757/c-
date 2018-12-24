@@ -101,6 +101,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CApplication.h" />
+    <ClInclude Include="CRange.h" />
+    <ClInclude Include="CWorkbooks.h" />
+    <ClInclude Include="CWorksheets.h" />
     <ClInclude Include="GeoAnno.h" />
     <ClInclude Include="GeoLayer.h" />
     <ClInclude Include="GeoMap.h" />
