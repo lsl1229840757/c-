@@ -103,7 +103,9 @@
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CRange.h" />
+    <ClInclude Include="CWorkbook.h" />
     <ClInclude Include="CWorkbooks.h" />
+    <ClInclude Include="CWorksheet.h" />
     <ClInclude Include="CWorksheets.h" />
     <ClInclude Include="GeoAnno.h" />
     <ClInclude Include="GeoLayer.h" />

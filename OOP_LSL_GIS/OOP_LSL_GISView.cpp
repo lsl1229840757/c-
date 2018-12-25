@@ -1,10 +1,10 @@
-
-// OOP_LSL_GISView.cpp : COOP_LSL_GISView ÀàµÄÊµÏÖ
+ï»¿
+// OOP_LSL_GISView.cpp : COOP_LSL_GISView ç±»çš„å®ç°
 //
 #include "stdafx.h"
 
-// SHARED_HANDLERS ¿ÉÒÔÔÚÊµÏÖÔ¤ÀÀ¡¢ËõÂÔÍ¼ºÍËÑË÷É¸Ñ¡Æ÷¾ä±úµÄ
-// ATL ÏîÄ¿ÖĞ½øĞĞ¶¨Òå£¬²¢ÔÊĞíÓë¸ÃÏîÄ¿¹²ÏíÎÄµµ´úÂë¡£
+// SHARED_HANDLERS å¯ä»¥åœ¨å®ç°é¢„è§ˆã€ç¼©ç•¥å›¾å’Œæœç´¢ç­›é€‰å™¨å¥æŸ„çš„
+// ATL é¡¹ç›®ä¸­è¿›è¡Œå®šä¹‰ï¼Œå¹¶å…è®¸ä¸è¯¥é¡¹ç›®å…±äº«æ–‡æ¡£ä»£ç ã€‚
 #ifndef SHARED_HANDLERS
 #include "OOP_LSL_GIS.h"
 #endif
@@ -21,7 +21,7 @@
 IMPLEMENT_DYNCREATE(COOP_LSL_GISView, CView)
 
 BEGIN_MESSAGE_MAP(COOP_LSL_GISView, CView)
-	// ±ê×¼´òÓ¡ÃüÁî
+	// æ ‡å‡†æ‰“å°å‘½ä»¤
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
@@ -36,11 +36,11 @@ ON_COMMAND(FullView, &COOP_LSL_GISView::OnFullview)
 ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
-// COOP_LSL_GISView ¹¹Ôì/Îö¹¹
+// COOP_LSL_GISView æ„é€ /ææ„
 
 COOP_LSL_GISView::COOP_LSL_GISView()
 {
-	// TODO: ÔÚ´Ë´¦Ìí¼Ó¹¹Ôì´úÂë
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æ„é€ ä»£ç 
 	map = NULL;
 	isMapLoaded = false;
 	clickNum = 0;
@@ -55,13 +55,13 @@ COOP_LSL_GISView::~COOP_LSL_GISView()
 
 BOOL COOP_LSL_GISView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: ÔÚ´Ë´¦Í¨¹ıĞŞ¸Ä
-	//  CREATESTRUCT cs À´ĞŞ¸Ä´°¿ÚÀà»òÑùÊ½
+	// TODO: åœ¨æ­¤å¤„é€šè¿‡ä¿®æ”¹
+	//  CREATESTRUCT cs æ¥ä¿®æ”¹çª—å£ç±»æˆ–æ ·å¼
 
 	return CView::PreCreateWindow(cs);
 }
 
-// COOP_LSL_GISView »æÖÆ
+// COOP_LSL_GISView ç»˜åˆ¶
 
 void COOP_LSL_GISView::OnDraw(CDC* pDC)
 {
@@ -160,19 +160,19 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 	if(map != NULL)
 		delete map;
 	map = new CGeoMap(1);
-	// ¿ªÊ¼¶ÁÎÄ¼şÍ·
+	// å¼€å§‹è¯»æ–‡ä»¶å¤´
 	int left,top,right,bottom;
 	fscanf(fp,"%d,%d",&left,&top);
 	fscanf(fp,"%d,%d",&right,&bottom);
 	map->setRect(CRect(left,top,right,bottom));
 	int layerNum;
 	fscanf(fp,"%d",&layerNum);
-	//´´½¨layerÖ¸Õë
+	//åˆ›å»ºlayeræŒ‡é’ˆ
 	//CGeoLayer *layers = new CGeoLayer[layerNum];
-	// ¶ÁÍ·ÎÄ¼ş½áÊø
+	// è¯»å¤´æ–‡ä»¶ç»“æŸ
 	for(int j=0;j<layerNum;j++){
 			CGeoLayer *layers = new CGeoLayer;
-			//¿ªÊ¼¶ÁÈ¡layer
+			//å¼€å§‹è¯»å–layer
 			int layerNameSize;
 			fscanf(fp,"%d",&layerNameSize);
 			char str[30];
@@ -189,7 +189,7 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 					switch (featureType)
 					{
 					case 1:
-						//ÕâÊÇÏß
+						//è¿™æ˜¯çº¿
 						obj = new CGeoPloyline;
 						while(!feof(fp)){
 							int x1,y1;
@@ -202,7 +202,7 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 						}
 						break;
 					case 2:
-						//ÕâÊÇÃæ
+						//è¿™æ˜¯é¢
 						obj = new CGeoPolygon;
 						while(!feof(fp)){
 							int x,y;
@@ -215,7 +215,7 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 						}
 						break;
 					case 4:
-						//ÕâÊÇ×¢¼Ç
+						//è¿™æ˜¯æ³¨è®°
 						break;
 					default:
 						break;
@@ -227,27 +227,27 @@ void COOP_LSL_GISView::readCH1Data(FILE *fp)
 	isMapLoaded = true;
 }
 
-// COOP_LSL_GISView ´òÓ¡
+// COOP_LSL_GISView æ‰“å°
 
 BOOL COOP_LSL_GISView::OnPreparePrinting(CPrintInfo* pInfo)
 {
 
-	// Ä¬ÈÏ×¼±¸
+	// é»˜è®¤å‡†å¤‡
 	return DoPreparePrinting(pInfo);
 }
 
 void COOP_LSL_GISView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: Ìí¼Ó¶îÍâµÄ´òÓ¡Ç°½øĞĞµÄ³õÊ¼»¯¹ı³Ì
+	// TODO: æ·»åŠ é¢å¤–çš„æ‰“å°å‰è¿›è¡Œçš„åˆå§‹åŒ–è¿‡ç¨‹
 }
 
 void COOP_LSL_GISView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: Ìí¼Ó´òÓ¡ºó½øĞĞµÄÇåÀí¹ı³Ì
+	// TODO: æ·»åŠ æ‰“å°åè¿›è¡Œçš„æ¸…ç†è¿‡ç¨‹
 }
 
 
-// COOP_LSL_GISView Õï¶Ï
+// COOP_LSL_GISView è¯Šæ–­
 
 #ifdef _DEBUG
 void COOP_LSL_GISView::AssertValid() const
@@ -260,7 +260,7 @@ void COOP_LSL_GISView::Dump(CDumpContext& dc) const
 	CView::Dump(dc);
 }
 
-COOP_LSL_GISDoc* COOP_LSL_GISView::GetDocument() const // ·Çµ÷ÊÔ°æ±¾ÊÇÄÚÁªµÄ
+COOP_LSL_GISDoc* COOP_LSL_GISView::GetDocument() const // éè°ƒè¯•ç‰ˆæœ¬æ˜¯å†…è”çš„
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(COOP_LSL_GISDoc)));
 	return (COOP_LSL_GISDoc*)m_pDocument;
@@ -268,7 +268,7 @@ COOP_LSL_GISDoc* COOP_LSL_GISView::GetDocument() const // ·Çµ÷ÊÔ°æ±¾ÊÇÄÚÁªµÄ
 #endif //_DEBUG
 
 
-// COOP_LSL_GISView ÏûÏ¢´¦Àí³ÌĞò
+// COOP_LSL_GISView æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 void COOP_LSL_GISView::OnFileOpen()
@@ -283,15 +283,17 @@ void COOP_LSL_GISView::OnFileOpen()
 	{
 		return;
 	}
-	if( fileName.Right(9) == "wuhan.txt") //¶ÁÈ¡ÎäººÏß×´
+	if( fileName.Right(9) == "wuhan.txt") //è¯»å–æ­¦æ±‰çº¿çŠ¶
 		readWHData(fp);
 	else if( fileName.Right(10) == "china1.txt" )
 		readCHData(fp);
-	else if( fileName.Right(10) == "china1.dat" ) //²âÊÔÊı¾İ
+	else if( fileName.Right(10) == "china1.dat" ) //æµ‹è¯•æ•°æ®
 		readCH1Data(fp);
 	else if(fileName.Right(10) == "china1.opt")
 		readCH1OPTD(fp);	
 	else if(fileName.Right(12) == "chnCity.xlsx")
+		readExcel(fileName);
+	else if(fileName.Right(11) == "chnCity.xls")
 		readExcel(fileName);
 	fclose(fp);
 	Invalidate();
@@ -305,21 +307,21 @@ void COOP_LSL_GISView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 	CSize size;
 	CSize size2;
 	CPoint pt;	
-	double ratio = 0.6; // ¿í¶ÈËõ·Å±ÈÀı
-	this->GetClientRect(&rectD);//È¡µÃ¿Í»§Çø¾ØĞÎÇøÓò´óĞ¡
+	double ratio = 0.6; // å®½åº¦ç¼©æ”¾æ¯”ä¾‹
+	this->GetClientRect(&rectD);//å–å¾—å®¢æˆ·åŒºçŸ©å½¢åŒºåŸŸå¤§å°
 	size = rectD.Size();
-	pt = rectD.CenterPoint();//È¡µÃ¿Í»§Çø¾ØĞÎÇøÓòÖĞĞÄµã×ø±ê
+	pt = rectD.CenterPoint();//å–å¾—å®¢æˆ·åŒºçŸ©å½¢åŒºåŸŸä¸­å¿ƒç‚¹åæ ‡
 
-	pDC->SetMapMode(MM_ANISOTROPIC); //ÉèÖÃÖ¸¶¨Éè±¸»·¾³µÄÓ³Éä·½Ê½
-	size.SetSize(size.cx*0.4,size.cy*ratio);
-	pDC->SetViewportExt(size);  //Éè¶¨ÊÓ¿Ú³ß´ç
-	pDC->SetViewportOrg(pt); //ÉèÖÃÊÓ¿ÚÖĞĞÄÎª×ø±êÏµÔ­µã
-
-	size2 = winRect.Size();  //Éè¶¨´°¿Ú¶ÔÓ¦³ß´ç
-	pt =  winRect.CenterPoint(); //ÉèÖÃ´°¿ÚÖĞĞÄÎª¶ÔÓ¦Ô­µã
-	pDC->SetWindowExt(size2);   //ÉèÖÃ´°¿Ú³¤¿í
-	pDC->SetWindowOrg(pt);	//ÉèÖÃ´°¿ÚÔ­µã
-
+	pDC->SetMapMode(MM_ANISOTROPIC); //è®¾ç½®æŒ‡å®šè®¾å¤‡ç¯å¢ƒçš„æ˜ å°„æ–¹å¼
+	//size.SetSize(size.cx*ratio,size.cy);
+	pDC->SetViewportExt(size);  //è®¾å®šè§†å£å°ºå¯¸
+	pDC->SetViewportOrg(pt); //è®¾ç½®è§†å£ä¸­å¿ƒä¸ºåæ ‡ç³»åŸç‚¹
+	mapRatio = -((double)size.cx)/size.cy;
+	size2 = winRect.Size();  //è®¾å®šçª—å£å¯¹åº”å°ºå¯¸
+	pt =  winRect.CenterPoint(); //è®¾ç½®çª—å£ä¸­å¿ƒä¸ºå¯¹åº”åŸç‚¹
+	size2.SetSize(size2.cy*mapRatio,size2.cy);
+	pDC->SetWindowExt(size2);   //è®¾ç½®çª—å£é•¿å®½
+	pDC->SetWindowOrg(pt);	//è®¾ç½®çª—å£åŸç‚¹
 	CSize size3 = pDC->GetWindowExt();
 }
 
@@ -330,7 +332,7 @@ void COOP_LSL_GISView::OnLButtonUp(UINT nFlags, CPoint point)
 		return;
 	if(isZoomIn==false)
 		return;
-	// TODO: ÔÚ´ËÌí¼ÓÏûÏ¢´¦Àí³ÌĞò´úÂëºÍ/»òµ÷ÓÃÄ¬ÈÏÖµ
+	// TODO: åœ¨æ­¤æ·»åŠ æ¶ˆæ¯å¤„ç†ç¨‹åºä»£ç å’Œ/æˆ–è°ƒç”¨é»˜è®¤å€¼
 	CRect rc;
 	this->GetClientRect(&rc);
 	if(!rc.PtInRect(point))
@@ -368,7 +370,7 @@ void COOP_LSL_GISView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void COOP_LSL_GISView::OnZoomin()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌĞò´úÂëSL
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç SL
 	if (isZoomIn == false){
 		isZoomIn = true;
 	}
@@ -378,7 +380,7 @@ void COOP_LSL_GISView::OnZoomin()
 }
 void COOP_LSL_GISView::OnUpdateZoomin(CCmdUI *pCmdUI)
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî¸üĞÂÓÃ»§½çÃæ´¦Àí³ÌĞò´úÂë
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤æ›´æ–°ç”¨æˆ·ç•Œé¢å¤„ç†ç¨‹åºä»£ç 
 	pCmdUI->SetCheck(isZoomIn==true);
 }
 
@@ -401,59 +403,167 @@ void COOP_LSL_GISView::OnMouseMove(UINT nFlags, CPoint point)
 	pDC->Rectangle(downPoint.x,downPoint.y,upPoint.x,upPoint.y);
 }
 
-
-void COOP_LSL_GISView::readExcel(CString path)
-{
-	CoInitialize(NULL);   //³õÊ¼»¯COM×é¼ş
-	_ConnectionPtr connection;
-	try
+void COOP_LSL_GISView::readExcel(CString path){
+	if(isMapLoaded==false)
+		return;
+	CApplication  m_oExcelApp;
+	CWorksheet    m_oWorkSheet;
+	CWorkbook     m_oWorkBook;
+	CWorkbooks    m_oWorkBooks;
+	CWorksheets   m_oWorkSheets;
+	CRange        m_oCurrRange;
+    LPDISPATCH lpDisp = NULL;
+    COleVariant covTrue((short)TRUE);
+    COleVariant covFalse((short)FALSE);
+    COleVariant covOptional((long)DISP_E_PARAMNOTFOUND, VT_ERROR);
+    CRange  oCurCell;
+ 
+    // åˆ›å»ºè¿æ¥
+    if (!m_oExcelApp.CreateDispatch(_T("Excel.Application")))
     {
-		CString strPath;
-		CString str1;
-		CString str2;
-		str1 = "Provider=Microsoft.Ace.OLEDB.12.0;Data Source=";
-		str2 = ";Extended Properties='Excel 8.0;HDR=Yes;IMEX=2'";
-		strPath = str1+path+str2;
-        connection.CreateInstance(__uuidof(Connection));   //´´½¨Connection¶ÔÏó
-        connection->Open(_bstr_t(strPath), "", "", adModeUnknown);
+        ::MessageBox(NULL, _T("åˆ›å»ºExcelæœåŠ¡å¤±è´¥!"), _T("é”™è¯¯æç¤º!"), MB_OK | MB_ICONERROR);
+        return;
     }
-    catch (_com_error e)
-    {
-		MessageBox(e.ErrorMessage());
+ 
+    m_oWorkBooks.AttachDispatch(m_oExcelApp.get_Workbooks());
+    // æ‰“å¼€æ–‡ä»¶
+	lpDisp = m_oWorkBooks.Open(path,
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing),
+        _variant_t(vtMissing));
+ 
+    m_oWorkBook.AttachDispatch(lpDisp);
+    m_oWorkSheets.AttachDispatch(m_oWorkBook.get_Worksheets());
+    //lpDisp = m_oWorkBook.get_ActiveSheet();
+    //m_oWorkSheet.AttachDispatch(lpDisp);
+ 
+    // è·å–ç¬¬å‡ ä¸ªsheetè¡¨å°±å†™å‡ 
+    m_oWorkSheet.AttachDispatch(m_oWorkSheets.get_Item(_variant_t((long)1)), TRUE);
+ 
+    // è·å–è¡Œæ•°å’Œåˆ—æ•°
+    CRange usedRange;
+    CRange mRange;
+    usedRange.AttachDispatch(m_oWorkSheet.get_UsedRange());
+    mRange.AttachDispatch(usedRange.get_Rows(), TRUE);
+	long nCount = mRange.get_Count();
+    mRange.ReleaseDispatch();
+    mRange.AttachDispatch(usedRange.get_Columns(), TRUE);
+	long nLines = mRange.get_Count();
+    usedRange.ReleaseDispatch();
+    mRange.ReleaseDispatch();
+ 
+    // è¯»å–
+    COleVariant vResult;
+    CString strData = _T("");
+	CGeoLayer* layer = new CGeoLayer;
+	for(long i = 1;i<=nCount;i++){
+		// è·³è¿‡è¡Œ
+		if(i==1)
+			continue;
+		CGeoObject* anno = new CGeoAnno;
+		int x,y;
+		for (int j = 1; j <= nLines; j++)
+		{
+			m_oCurrRange.AttachDispatch(m_oWorkSheet.get_Cells());
+			m_oCurrRange.AttachDispatch(m_oCurrRange.get_Item(COleVariant((long)i), COleVariant((long)j)).pdispVal);
+ 
+			vResult = m_oCurrRange.get_Value2();
+			if (vResult.vt == VT_BSTR)
+			{
+				strData = vResult.bstrVal;
+				((CGeoAnno*)anno)->setName(strData);
+			}
+			else if (vResult.vt == VT_R8)
+			{
+				if(j==2)
+					x = (int)vResult.dblVal;
+				if(j==3)
+					y =(int)vResult.dblVal;
+			}
+			else
+			{
+				AfxMessageBox(_T("æ•°æ®ç±»å‹é”™è¯¯!"));
+			}
+			m_oCurrRange.ReleaseDispatch();
+		}
+		((CGeoAnno*)anno)->setPoint(x,y);
+		layer->addObject(anno);
+		map->addLayer(layer);
 	}
-	_RecordsetPtr pRecordset;
-    char szSQL[] = "Select * From [Sheet1$]";
-	try
-    {
-        pRecordset.CreateInstance(__uuidof(Recordset));	//´´½¨Recordset¶ÔÏó
-        pRecordset->Open(_bstr_t(szSQL), _variant_t((IDispatch*)connection, TRUE),
-            adOpenUnspecified, adLockUnspecified, adCmdUnknown);
-    }
-    catch (_com_error e)
-    {
-        connection->Close();
-    }
-	if (pRecordset == NULL)
-    {
-        connection->Close();
-    }
+    m_oWorkBooks.Close();
+    m_oExcelApp.Quit();
+ 
+    m_oCurrRange.ReleaseDispatch();
+    m_oWorkSheet.ReleaseDispatch();
+    m_oWorkSheets.ReleaseDispatch();
+    m_oWorkBook.ReleaseDispatch();
+    m_oWorkBooks.ReleaseDispatch();
+    m_oExcelApp.ReleaseDispatch();
 
-	  if (!pRecordset->BOF)
-    {
-        try
-        {
-            pRecordset->MoveFirst();
-			while (!pRecordset->adoEOF)
-            {
-                _variant_t vtName = pRecordset->Fields->GetItem("Name")->Value;
-                _variant_t vtX = pRecordset->Fields->GetItem("X")->Value;
-				 _variant_t vtY = pRecordset->Fields->GetItem("Y")->Value;
-                pRecordset->MoveNext();
-            }
-        }
-        catch (_com_error e)
-        {
-			e.Error();
-        }
-	}
 }
+//void COOP_LSL_GISView::readExcel(CString path)
+//{
+//	CoInitialize(NULL);   //åˆå§‹åŒ–COMç»„ä»¶
+//	_ConnectionPtr connection;
+//	try
+//    {
+//		CString strPath;
+//		CString str1;
+//		CString str2;
+//		str1 = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\"";
+//		str2 = "\";Extended Properties='Excel 12.0;HDR=YES;IMEX=0'";
+//		strPath = str1+path+str2;
+//        connection.CreateInstance(__uuidof(Connection));   //åˆ›å»ºConnectionå¯¹è±¡
+//        connection->Open(_bstr_t(strPath), "", "", adModeUnknown);
+//    }
+//    catch (_com_error e)
+//    {
+//		MessageBox(e.ErrorMessage());
+//	}
+//	_RecordsetPtr pRecordset;
+//    char szSQL[] = "Select * From [Sheet1$]";
+//	try
+//    {
+//        pRecordset.CreateInstance(__uuidof(Recordset));	//åˆ›å»ºRecordsetå¯¹è±¡
+//        pRecordset->Open(_bstr_t(szSQL), _variant_t((IDispatch*)connection, TRUE),
+//            adOpenUnspecified, adLockUnspecified, adCmdUnknown);
+//    }
+//    catch (_com_error e)
+//    {
+//        connection->Close();
+//    }
+//	if (pRecordset == NULL)
+//    {
+//        connection->Close();
+//    }
+//
+//	  if (!pRecordset->BOF)
+//    {
+//        try
+//        {
+//            pRecordset->MoveFirst();
+//			while (!pRecordset->adoEOF)
+//            {
+//                _variant_t vtName = pRecordset->Fields->GetItem("Name")->Value;
+//                _variant_t vtX = pRecordset->Fields->GetItem("X")->Value;
+//				 _variant_t vtY = pRecordset->Fields->GetItem("Y")->Value;
+//                pRecordset->MoveNext();
+//            }
+//        }
+//        catch (_com_error e)
+//        {
+//			e.Error();
+//        }
+//	}
+//}

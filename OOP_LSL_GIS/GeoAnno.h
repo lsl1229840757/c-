@@ -5,10 +5,13 @@ class CGeoAnno :
 {
 private:
 	CPoint pt;
+	CString name;
 
 public:
 	CGeoAnno(void);
 	~CGeoAnno(void);
 	void Draw(CDC *pDC);
+	void setPoint(int x,int y);
+	void setName(CString name);
 };
 
