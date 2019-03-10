@@ -4,6 +4,9 @@
 
 CGeoObject::CGeoObject(void)
 {
+	r=0;
+	g=0;
+	b=0;
 }
 
 CGeoObject::~CGeoObject(void)
@@ -22,7 +25,9 @@ void CGeoObject::setRect(CRect rect){
 CRect CGeoObject::getRect(){
 	return this->crRect;
 }
+void CGeoObject::ClipObj(CRect wcRect1){
 
+}
 CString CGeoObject::getName(){
 	return this->Name;
 }

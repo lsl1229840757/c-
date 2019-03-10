@@ -98,6 +98,8 @@ BEGIN
     BUTTON      ID_APP_ABOUT
     BUTTON      ZoomIn
     BUTTON      FullView
+    BUTTON      generatePoint
+    BUTTON      clipButton
 END
 
 

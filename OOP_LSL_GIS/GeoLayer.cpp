@@ -41,3 +41,14 @@ CString CGeoLayer::getName(){
 CArray<CGeoObject *,CGeoObject *>& CGeoLayer::getObjects(){
 	return this->geoObjects;
 }
+
+void CGeoLayer::clipLayer(CRect clipRect1)
+{
+	for (int i = 0; i < geoObjects.GetSize(); i++)
+	{
+		geoObjects[i]->ClipObj(clipRect1);
+
+
+
+	}
+}

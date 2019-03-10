@@ -14,6 +14,7 @@ public:
 	void setRect(int x1,int y1,int width,int height);
 	CRect getRect();
 	virtual void Draw(CDC *pDC)=0;
+	virtual void ClipObj(CRect wcRect1);
 	double lineWidth;
 	int r;
 	int g;

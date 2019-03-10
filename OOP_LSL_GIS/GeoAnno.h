@@ -14,4 +14,3 @@ public:
 	void setPoint(int x,int y);
 	void setName(CString name);
 };
-

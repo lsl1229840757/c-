@@ -34,17 +34,22 @@ ON_COMMAND(ZoomIn, &COOP_LSL_GISView::OnZoomin)
 ON_UPDATE_COMMAND_UI(ZoomIn, &COOP_LSL_GISView::OnUpdateZoomin)
 ON_COMMAND(FullView, &COOP_LSL_GISView::OnFullview)
 ON_WM_MOUSEMOVE()
+ON_COMMAND(generatePoint, &COOP_LSL_GISView::OnGeneratepoint)
+ON_COMMAND(clipButton, &COOP_LSL_GISView::OnClipbutton)
+ON_UPDATE_COMMAND_UI(clipButton, &COOP_LSL_GISView::OnUpdateClipbutton)
 END_MESSAGE_MAP()
 
 // COOP_LSL_GISView 构造/析构
 
 COOP_LSL_GISView::COOP_LSL_GISView()
+	: isClip(false)
 {
 	// TODO: 在此处添加构造代码
 	map = NULL;
 	isMapLoaded = false;
 	clickNum = 0;
 	isZoomIn = false;
+	isClip = false;
 }
 
 COOP_LSL_GISView::~COOP_LSL_GISView()
@@ -64,7 +69,7 @@ BOOL COOP_LSL_GISView::PreCreateWindow(CREATESTRUCT& cs)
 // COOP_LSL_GISView 绘制
 
 void COOP_LSL_GISView::OnDraw(CDC* pDC)
-{
+{ 
 	COOP_LSL_GISDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc){
@@ -106,7 +111,7 @@ void COOP_LSL_GISView::readCH1OPTD(FILE *fp){
 				fscanf(fp,"%d, %d, %d",&r,&g,&b);
 				for(int i=0;i<layer->getObjects().GetSize();i++){
 					(layer->getObjects())[i]->r = r;
-					(layer->getObjects())[i]->g = g;	
+					(layer->getObjects())[i]->g = g;
 					(layer->getObjects())[i]->b = b;
 				}
 			}
@@ -137,6 +142,43 @@ void COOP_LSL_GISView::readWHData(FILE *fp)
 	}
 }
 
+
+void COOP_LSL_GISView::readFillTest(FILE* fp)
+{
+	isMapLoaded = false;
+		int x,y;
+	if(map != NULL)
+		delete map;
+	map = new CGeoMap(1);
+	CGeoLayer *layer = new CGeoLayer;
+	map->addLayer(layer);
+	while(!feof(fp)){
+		int n; //多边形个数
+		int m; //点数
+		int color;
+		CGeoObject *poly = new CGeoPolygon;
+		layer->addObject(poly);
+		fscanf(fp,"%d",&n);
+		for(int i=0;i<n;i++){
+			fscanf(fp,"%d",&m);
+			for(int j=0;j<m;j++){
+				fscanf(fp,"%d%d",&x,&y);
+				if(i==0){
+					((CGeoPolygon *)poly)->addPoint(CPoint(x,y)); // 这里是生成同种多边形的边界
+				}
+			}
+			
+		}
+		fscanf(fp,"%d%d",&x,&y); // 读取种子点
+		((CGeoPolygon *)poly)->seeds.Add(CPoint(x,y));
+		fscanf(fp,"%d",&color); // 读取颜色
+		poly->r = byte((color >> 16) & 255);
+		poly->g = byte((color>> 8) & 255);
+		poly->b = byte((color >> 0) & 255);
+	}
+}
+
+
 void COOP_LSL_GISView::readCHData(FILE *fp)
 {
 	isMapLoaded = false;
@@ -155,6 +197,32 @@ void COOP_LSL_GISView::readCHData(FILE *fp)
 	}
 }
 
+void COOP_LSL_GISView::readClipData(FILE * fp)
+{
+	if(map != NULL)
+		delete map;
+	map = new CGeoMap(1);
+	// 开始读文件头
+	int left,top,right,bottom;
+	fscanf(fp,"%d%d",&left,&top);
+	fscanf(fp,"%d%d",&right,&bottom);
+	map->setRect(CRect(left,top,right,bottom));
+	CGeoLayer *layer = new CGeoLayer;
+	map->addLayer(layer);
+	while( !feof(fp)){
+		int num;
+		fscanf(fp,"%d",&num);
+		CGeoObject *obj = new CGeoPloyline;
+		for(int i=0;i<num;i++){
+			int x,y;
+			fscanf(fp,"%d%d",&x,&y);
+			((CGeoPloyline *)obj)->addPoint(CPoint(x,y));
+		}
+		layer->addObject(obj);
+	}
+	winRect = map->crRect;
+	isMapLoaded=true;
+}
 void COOP_LSL_GISView::readCH1Data(FILE *fp)
 {
 	if(map != NULL)
@@ -295,15 +363,24 @@ void COOP_LSL_GISView::OnFileOpen()
 		readExcel(fileName);
 	else if(fileName.Right(11) == "chnCity.xls")
 		readExcel(fileName);
+	else if(fileName.Right(15) == "chnFillTest.txt")
+		readFillTest(fp);
+	else if(fileName.Right(12) == "clipData.txt")
+		readClipData(fp);
+
 	fclose(fp);
 	Invalidate();
 }
-
+void COOP_LSL_GISView::readTxt(FILE* fp){
+	int x,x1,y,y1;
+	fscanf(fp,"%d,%d,%d,%d",&x1,&y1,&x,&y);
+}
 
 void COOP_LSL_GISView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 {
-	if( !isMapLoaded ) 
+	if(!isMapLoaded){
 		return;
+	}
 	CSize size;
 	CSize size2;
 	CPoint pt;	
@@ -323,6 +400,7 @@ void COOP_LSL_GISView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 	pDC->SetWindowExt(size2);   //设置窗口长宽
 	pDC->SetWindowOrg(pt);	//设置窗口原点
 	CSize size3 = pDC->GetWindowExt();
+	
 }
 
 
@@ -330,27 +408,46 @@ void COOP_LSL_GISView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (isMapLoaded == false)
 		return;
-	if(isZoomIn==false)
-		return;
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	CRect rc;
-	this->GetClientRect(&rc);
-	if(!rc.PtInRect(point))
-		return;
-	clickNum++;
-	if(clickNum==2){
-		upPoint = point;
-		CDC* pDC = GetDC();
-		OnPrepareDC(pDC);
-		pDC -> DPtoLP(&downPoint);
-		pDC -> DPtoLP(&upPoint);
-		int xmax = downPoint.x>upPoint.x?downPoint.x:upPoint.x;
-		int ymax = downPoint.y>upPoint.y?downPoint.y:upPoint.y;
-		int xmin = downPoint.x<upPoint.x?downPoint.x:upPoint.x;
-		int ymin = downPoint.y<upPoint.y?downPoint.y:upPoint.y;
-		rc = CRect(xmin,ymax,xmax,ymin);
-		winRect = rc;
-		Invalidate();
+	if(isZoomIn==true){
+		CRect rc;
+		this->GetClientRect(&rc);
+		if(!rc.PtInRect(point))
+			return;
+		clickNum++;
+		if(clickNum==2){
+			upPoint = point;
+			CDC* pDC = GetDC();
+			OnPrepareDC(pDC);
+			pDC -> DPtoLP(&downPoint);
+			pDC -> DPtoLP(&upPoint);
+			int xmax = downPoint.x>upPoint.x?downPoint.x:upPoint.x;
+			int ymax = downPoint.y>upPoint.y?downPoint.y:upPoint.y;
+			int xmin = downPoint.x<upPoint.x?downPoint.x:upPoint.x;
+			int ymin = downPoint.y<upPoint.y?downPoint.y:upPoint.y;
+			rc = CRect(xmin,ymax,xmax,ymin);
+			winRect = rc;
+			Invalidate();
+		}
+	}else if(isClip==true){
+		CRect rc;
+		this->GetClientRect(&rc);
+		if(!rc.PtInRect(point))
+			return;
+		clickNum++;
+		if(clickNum==2){
+			upPoint = point;
+			CDC* pDC = GetDC();
+			OnPrepareDC(pDC);
+			pDC -> DPtoLP(&downPoint);
+			pDC -> DPtoLP(&upPoint);
+			int xmax = downPoint.x>upPoint.x?downPoint.x:upPoint.x;
+			int ymax = downPoint.y>upPoint.y?downPoint.y:upPoint.y;
+			int xmin = downPoint.x<upPoint.x?downPoint.x:upPoint.x;
+			int ymin = downPoint.y<upPoint.y?downPoint.y:upPoint.y;
+			rc = CRect(xmin,ymax,xmax,ymin);
+			map->clipMap(rc);
+			Invalidate();
+		}
 	}
 }
 
@@ -359,7 +456,7 @@ void COOP_LSL_GISView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if(isMapLoaded==false)
 		return;
-	if(isZoomIn==false)
+	if(isZoomIn==false&&isClip==false)
 		return;
 	clickNum=0;
 	clickNum++;
@@ -382,6 +479,17 @@ void COOP_LSL_GISView::OnUpdateZoomin(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->SetCheck(isZoomIn==true);
+}
+
+void COOP_LSL_GISView::OnClipbutton()
+{
+	isClip?isClip=false:isClip=true;
+}
+
+
+void COOP_LSL_GISView::OnUpdateClipbutton(CCmdUI *pCmdUI)
+{
+		pCmdUI->SetCheck(isClip==true);
 }
 
 
@@ -512,58 +620,108 @@ void COOP_LSL_GISView::readExcel(CString path){
     m_oExcelApp.ReleaseDispatch();
 
 }
-//void COOP_LSL_GISView::readExcel(CString path)
-//{
-//	CoInitialize(NULL);   //初始化COM组件
-//	_ConnectionPtr connection;
-//	try
-//    {
-//		CString strPath;
-//		CString str1;
-//		CString str2;
-//		str1 = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\"";
-//		str2 = "\";Extended Properties='Excel 12.0;HDR=YES;IMEX=0'";
-//		strPath = str1+path+str2;
-//        connection.CreateInstance(__uuidof(Connection));   //创建Connection对象
-//        connection->Open(_bstr_t(strPath), "", "", adModeUnknown);
-//    }
-//    catch (_com_error e)
-//    {
-//		MessageBox(e.ErrorMessage());
-//	}
-//	_RecordsetPtr pRecordset;
-//    char szSQL[] = "Select * From [Sheet1$]";
-//	try
-//    {
-//        pRecordset.CreateInstance(__uuidof(Recordset));	//创建Recordset对象
-//        pRecordset->Open(_bstr_t(szSQL), _variant_t((IDispatch*)connection, TRUE),
-//            adOpenUnspecified, adLockUnspecified, adCmdUnknown);
-//    }
-//    catch (_com_error e)
-//    {
-//        connection->Close();
-//    }
-//	if (pRecordset == NULL)
-//    {
-//        connection->Close();
-//    }
-//
-//	  if (!pRecordset->BOF)
-//    {
-//        try
-//        {
-//            pRecordset->MoveFirst();
-//			while (!pRecordset->adoEOF)
-//            {
-//                _variant_t vtName = pRecordset->Fields->GetItem("Name")->Value;
-//                _variant_t vtX = pRecordset->Fields->GetItem("X")->Value;
-//				 _variant_t vtY = pRecordset->Fields->GetItem("Y")->Value;
-//                pRecordset->MoveNext();
-//            }
-//        }
-//        catch (_com_error e)
-//        {
-//			e.Error();
-//        }
-//	}
-//}
+
+// 随机生成点
+void COOP_LSL_GISView::OnGeneratepoint()
+{
+	map = new CGeoMap(1);
+	CGeoObject *polygon = new CGeoPolygon();
+	CArray<CPoint,CPoint> pts;
+	pts.Add(CPoint(100, 100));
+	pts.Add(CPoint(50, 150));
+	pts.Add(CPoint(100, 125));
+	pts.Add(CPoint(150, 150));
+	pts.Add(CPoint(100, 100));
+	for (int i = 0; i < pts.GetSize(); i++)
+	{
+		((CGeoPolygon *)polygon)->addPoint(pts.GetAt(i));
+	}
+	CGeoLayer *layer = new CGeoLayer();
+	int size = ((CGeoPolygon *)polygon)->pts.GetSize();
+	CGeoObject *point = new CGeoPoint;
+	for(int i=0;i<size-2;i++){
+		CPoint p1 = ((CGeoPolygon *)polygon)->pts[i];
+		CPoint p2 = ((CGeoPolygon *)polygon)->pts[i+1];
+		CPoint p3 = ((CGeoPolygon *)polygon)->pts[i+2];
+		if(judgeDirection(p1,p2,p3)){
+			CPoint inPoint;
+			int x = (p1.x+p2.x+p3.x)/3;
+			int y = (p1.y+p2.y+p3.y)/3;
+			inPoint.x = x;
+			inPoint.y = y;
+			if(PtInPolygon(inPoint,((CGeoPolygon *)polygon)->pts)){
+				((CGeoPoint *)point)->setPoint(inPoint);
+				break;
+			}
+		}
+	}
+	point->r = 255;
+	point->g = 0;
+	point->b = 0;
+	layer->addObject(polygon);
+	layer->addObject(point);
+	map->addLayer(layer);
+	Invalidate();
+}
+
+
+double COOP_LSL_GISView::getCrossProducts(CPoint p1, CPoint p2, double oldvx,double oldvy )
+{
+	double nvx = p2.x - p1.x;
+	double nvy = p2.y - p1.y;
+	return oldvx*nvy + nvx*oldvy;
+}
+// 返回true就是逆时针，返回false就是顺时针，注意电脑坐标轴有点不一样
+bool COOP_LSL_GISView::judgeDirection(CPoint p1, CPoint p2,CPoint p3)
+{
+	double x1 = p2.x-p1.x;
+	double y1 = p2.y-p1.y;
+	double x2 = p3.x-p2.x;
+	double y2 = p3.y-p2.y;
+	double crossProduct = x1 * y2 - x2 * y1;
+	if(crossProduct<0){
+		return true;
+	}
+	return false;
+}
+//作用：判断点是否在多边形内
+//p指目标点， ptPolygon指多边形的点集合， nCount指多边形的边数
+bool COOP_LSL_GISView::PtInPolygon (CPoint p, CArray<CPoint ,CPoint>& ptPolygon)  
+{  
+	int nCount = ptPolygon.GetSize();
+	// 交点个数  
+	int nCross = 0;  
+	for (int i = 0; i < nCount; i++)   
+	{  
+		CPoint p1 = ptPolygon[i];  
+		CPoint p2 = ptPolygon[(i + 1) % nCount];// 点P1与P2形成连线  
+ 
+		if ( p1.y == p2.y )  
+			continue;  
+		if ( p.y < min(p1.y, p2.y) )  
+			continue;  
+		if ( p.y >= max(p1.y, p2.y) )  
+			continue;  
+		// 求交点的x坐标（由直线两点式方程转化而来）   
+ 
+		double x = (double)(p.y - p1.y) * (double)(p2.x - p1.x) / (double)(p2.y - p1.y) + p1.x;  
+ 
+		// 只统计p1p2与p向右射线的交点  
+		if ( x > p.x )  
+		{  
+			nCross++;  
+		}  
+ 
+	}  
+ 
+	// 交点为偶数，点在多边形之外  
+	// 交点为奇数，点在多边形之内
+	if ((nCross % 2) == 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+} 

@@ -1,4 +1,4 @@
-﻿生成启动时间为 2018-12-25 20:29:35。
+﻿生成启动时间为 2019-03-10 10:34:19。
      1>项目“D:\VsWorkSpace\OOP_LSL_GIS\OOP_LSL_GIS\OOP_LSL_GIS.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          D:\VS2012\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OOP_LSL_GIS.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt OOP_LSL_GISView.cpp
@@ -9,8 +9,8 @@
      1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.h(15): warning C4067: 预处理器指令后有意外标记 - 应输入换行符
      1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.h(16): warning C4067: 预处理器指令后有意外标记 - 应输入换行符
      1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.h(17): warning C4067: 预处理器指令后有意外标记 - 应输入换行符
-     1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.cpp(79): warning C4805: “==”: 在操作中将类型“boolean”与类型“bool”混合不安全
-     1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.cpp(322): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+     1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.cpp(84): warning C4805: “==”: 在操作中将类型“boolean”与类型“bool”混合不安全
+     1>d:\vsworkspace\oop_lsl_gis\oop_lsl_gis\oop_lsl_gisview.cpp(399): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
        Link:
          D:\VS2012\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\VsWorkSpace\OOP_LSL_GIS\Debug\OOP_LSL_GIS.exe" /INCREMENTAL /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:D:\VS2012\VC\Include\Manifest\dpiaware.manifest /DEBUG /PDB:"D:\VsWorkSpace\OOP_LSL_GIS\Debug\OOP_LSL_GIS.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /ENTRY:"wWinMainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\VsWorkSpace\OOP_LSL_GIS\Debug\OOP_LSL_GIS.lib" /MACHINE:X86 Debug\OOP_LSL_GIS.res
          Debug\GeoAnno.obj
@@ -30,4 +30,4 @@
 
 生成成功。
 
-已用时间 00:00:01.16
+已用时间 00:00:00.99

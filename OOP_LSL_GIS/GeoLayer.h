@@ -19,5 +19,7 @@ private:
 	CArray<CGeoObject *,CGeoObject *> geoObjects;
 	boolean isVisible;
 
+public:
+	void clipLayer(CRect clipRect1);
 };
 

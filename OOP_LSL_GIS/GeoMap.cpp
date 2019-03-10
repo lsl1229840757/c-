@@ -58,3 +58,9 @@ CGeoLayer* CGeoMap::getLayerByName(CString name){
 		}
 	}
 }
+void CGeoMap::clipMap(CRect clipRect){
+	for (int i = 0; i < geoLayers.GetSize(); i++)
+	{
+		geoLayers[i]->clipLayer(clipRect);
+	}
+}

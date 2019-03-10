@@ -10,9 +10,8 @@ public:
 	void Draw(CDC* pDC);
 	CGeoPolygon(void);
 	~CGeoPolygon(void);
-private:
+	void FloodFillPolygon(CDC *pDC);
 	CArray<CPoint,CPoint> pts; //TODO 这里没有传入指针
-	CArray<CGeoPoint *,CGeoPoint*> gpts;
-
+	CArray<CPoint,CPoint> seeds;
 };
 

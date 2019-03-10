@@ -1,5 +1,6 @@
 #pragma once // 保证.h只被包含一次
 #include "GeoLayer.h"
+#include "atltypes.h"
 class CGeoMap
 {
 public:
@@ -25,5 +26,9 @@ public:
 private:
 	CString Name; //名字
 
+public:
+	CRect clipRect;
+
+	void clipMap(CRect clipRect);
 };
 

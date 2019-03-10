@@ -16,6 +16,8 @@
 #include "CWorksheet.h"            //工作薄中的单个工作表
 #include "CWorksheets.h"            //统管当前工作簿中的所有工作表
 #include "GeoAnno.h"
+#include <cmath>
+#define M_PI 3.14159265358979323846
 #pragma warning(disable:4996)
 class COOP_LSL_GISView : public CView
 {
@@ -55,6 +57,8 @@ public:
 	void readWHData(FILE *fp);
 	virtual ~COOP_LSL_GISView();
 	void readCH1OPTD(FILE *fp);
+
+	void readTxt(FILE *fp);
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -66,6 +70,8 @@ protected:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
+	bool COOP_LSL_GISView::PtInPolygon (CPoint p, CArray<CPoint ,CPoint>& ptPolygon);
+	bool judgeDirection(CPoint p1, CPoint p2,CPoint p3);
 	afx_msg void OnFileOpen();
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
@@ -77,6 +83,13 @@ public:
 	afx_msg void OnFullview();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	void readExcel(CString path);
+	afx_msg void OnGeneratepoint();
+	double getCrossProducts(CPoint p1, CPoint p2, double oldvx,double oldvy );
+	void readFillTest(FILE* fp);
+	bool isClip;
+	void readClipData(FILE * fp);
+	afx_msg void OnClipbutton();
+	afx_msg void OnUpdateClipbutton(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // OOP_LSL_GISView.cpp 中的调试版本
