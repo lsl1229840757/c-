@@ -17,4 +17,5 @@ public:
 	int GetCode(CRect wcRect1, CPoint pt1);
 	void ClipObj(CRect wcRect1);
 	CArray<CPoint,CPoint> clipPts;
+	void drawBezier(CDC * pDC, CArray<CPoint,CPoint>& pts);
 };

@@ -4,6 +4,9 @@
 
 CGeoPolygon::CGeoPolygon(void)
 {
+	r = 0;
+	g = 0;
+	b = 0;
 }
 
 
@@ -28,8 +31,8 @@ void CGeoPolygon::Draw(CDC* pDC){
 		}
 	}
 	//pDC->SelectObject(oldBrush);
-	//pDC->Polygon(point,size);
-	FloodFillPolygon(pDC);
+	pDC->Polygon(point,size);
+	//FloodFillPolygon(pDC);
 }
 int CGeoPolygon::getSize(){
 	return pts.GetSize();
