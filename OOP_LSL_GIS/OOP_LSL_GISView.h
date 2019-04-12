@@ -45,6 +45,8 @@ protected:
 
 // 实现
 public:
+	CBitmap bmp;
+	CDC *dcMen; // 内存CDC *
 	bool isZoomIn;
 	CRect winRect;
 	CRect rectD;
@@ -57,7 +59,7 @@ public:
 	void readWHData(FILE *fp);
 	virtual ~COOP_LSL_GISView();
 	void readCH1OPTD(FILE *fp);
-
+	bool isDrag;
 	void readTxt(FILE *fp);
 #ifdef _DEBUG
 	virtual void AssertValid() const;
@@ -90,6 +92,9 @@ public:
 	void readClipData(FILE * fp);
 	afx_msg void OnClipbutton();
 	afx_msg void OnUpdateClipbutton(CCmdUI *pCmdUI);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnDragbutton();
+	afx_msg void OnUpdateDragbutton(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // OOP_LSL_GISView.cpp 中的调试版本

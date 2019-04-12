@@ -11,6 +11,7 @@
 
 #include "OOP_LSL_GISDoc.h"
 #include "OOP_LSL_GISView.h"
+#include "ConvexHull.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -33,10 +34,13 @@ BEGIN_MESSAGE_MAP(COOP_LSL_GISView, CView)
 ON_COMMAND(ZoomIn, &COOP_LSL_GISView::OnZoomin)
 ON_UPDATE_COMMAND_UI(ZoomIn, &COOP_LSL_GISView::OnUpdateZoomin)
 ON_COMMAND(FullView, &COOP_LSL_GISView::OnFullview)
+ON_COMMAND(dragButton, &COOP_LSL_GISView::OnDragbutton)
 ON_WM_MOUSEMOVE()
 ON_COMMAND(generatePoint, &COOP_LSL_GISView::OnGeneratepoint)
 ON_COMMAND(clipButton, &COOP_LSL_GISView::OnClipbutton)
 ON_UPDATE_COMMAND_UI(clipButton, &COOP_LSL_GISView::OnUpdateClipbutton)
+ON_WM_SIZE()
+ON_UPDATE_COMMAND_UI(dragButton, &COOP_LSL_GISView::OnUpdateDragbutton)
 END_MESSAGE_MAP()
 
 // COOP_LSL_GISView 构造/析构
@@ -50,12 +54,19 @@ COOP_LSL_GISView::COOP_LSL_GISView()
 	clickNum = 0;
 	isZoomIn = false;
 	isClip = false;
+	dcMen = NULL;//初始化内存CDC*
+	isDrag = false;
 }
 
 COOP_LSL_GISView::~COOP_LSL_GISView()
 {
 	if(map!= NULL)
 		delete map;
+	if(dcMen!=NULL){
+		dcMen->DeleteDC();//回收对应的图片
+		bmp.DeleteObject();//解除图片与CDC*的绑定
+		delete dcMen;//回收空间
+	}
 }
 
 BOOL COOP_LSL_GISView::PreCreateWindow(CREATESTRUCT& cs)
@@ -76,7 +87,20 @@ void COOP_LSL_GISView::OnDraw(CDC* pDC)
 		return;
 	}
 	if(map != NULL){
-		map->Draw(pDC);
+		CRect rect;
+		GetClientRect(&rect); 
+		if(dcMen==NULL){
+			dcMen = new CDC();//创建新DC（缺省大小是1*1,单色）
+			dcMen->CreateCompatibleDC(pDC);//兼容于pDC
+			bmp.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());
+			dcMen->SelectObject(&bmp);//把位图存入DC
+		}
+		//map->Draw(pDC);
+		pDC->DPtoLP(&rect);
+		OnPrepareDC(dcMen);
+		dcMen->FillSolidRect(rect,pDC->GetBkColor());
+		map->Draw(dcMen);
+		pDC->BitBlt(rect.left,rect.top,rect.Width(),rect.Height(),dcMen,rect.left,rect.top,SRCCOPY);
 	}
 }
 
@@ -448,6 +472,8 @@ void COOP_LSL_GISView::OnLButtonUp(UINT nFlags, CPoint point)
 			map->clipMap(rc);
 			Invalidate();
 		}
+	}else if(isDrag){
+		clickNum = 0;
 	}
 }
 
@@ -456,7 +482,7 @@ void COOP_LSL_GISView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if(isMapLoaded==false)
 		return;
-	if(isZoomIn==false&&isClip==false)
+	if(isZoomIn==false&&isClip==false&&isDrag==false)
 		return;
 	clickNum=0;
 	clickNum++;
@@ -504,11 +530,40 @@ void COOP_LSL_GISView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if(!(clickNum==1))
 		return;
-	CDC *pDC = GetDC();
-	pDC->SetROP2(R2_NOTXORPEN);
-	pDC->Rectangle(downPoint.x,downPoint.y,point.x,point.y);
-	upPoint = point;
-	pDC->Rectangle(downPoint.x,downPoint.y,upPoint.x,upPoint.y);
+	if(isZoomIn||isClip){
+		CDC *pDC = GetDC();
+		pDC->SetROP2(R2_NOTXORPEN);
+		pDC->Rectangle(downPoint.x,downPoint.y,point.x,point.y);
+		upPoint = point;
+		pDC->Rectangle(downPoint.x,downPoint.y,upPoint.x,upPoint.y);
+	}else if(isDrag){
+		CRect rect;
+		upPoint = point;
+		GetClientRect(&rect);
+		int width = rect.Width();
+		int height = rect.Height();
+		CPoint p1(downPoint),p2(upPoint);
+		CDC* pDC = GetDC();
+		OnPrepareDC(pDC);
+		pDC->DPtoLP(&p1);
+		pDC->DPtoLP(&p2);
+		CPoint p = p2 - p1;
+		pDC->DPtoLP(&rect);
+		pDC->BitBlt(rect.left, rect.top,rect.Width(),rect.Height(),dcMen,rect.left-p.x,rect.top-p.y,SRCCOPY);
+		CRect rect1;
+		if(p.x>0) // 填左侧区域
+			rect1 = CRect(width+(upPoint.x-downPoint.x),0,width,height);
+		else //填右侧
+			rect1 = CRect(width+(upPoint.x-downPoint.x),0,width,height);
+		pDC->DPtoLP(&rect1);
+		pDC->FillSolidRect(rect1,pDC->GetBkColor());
+		if(p.y>0)//填充上侧
+			rect1 = CRect(0,height+(upPoint.y-downPoint.y),width,height);
+		else
+			rect1 = CRect(0,0,width,upPoint.y-downPoint.y);
+		pDC->DPtoLP(&rect1);
+		pDC->FillSolidRect(rect1,pDC->GetBkColor());
+	}
 }
 
 void COOP_LSL_GISView::readExcel(CString path){
@@ -572,9 +627,12 @@ void COOP_LSL_GISView::readExcel(CString path){
     mRange.ReleaseDispatch();
  
     // 读取
+	CGeoObject * hull = new CConvexHull();
     COleVariant vResult;
     CString strData = _T("");
 	CGeoLayer* layer = new CGeoLayer;
+	CGeoLayer* convexLayer = new CGeoLayer;
+	CArray<CGeoObject*,CGeoObject*> objs;
 	for(long i = 1;i<=nCount;i++){
 		// 跳过行
 		if(i==1)
@@ -606,9 +664,13 @@ void COOP_LSL_GISView::readExcel(CString path){
 			m_oCurrRange.ReleaseDispatch();
 		}
 		((CGeoAnno*)anno)->setPoint(x,y);
+		objs.Add(new CGeoPoint(x,y));
 		layer->addObject(anno);
-		map->addLayer(layer);
 	}
+	((CConvexHull *)hull)->getConvexHull(objs);
+	convexLayer->addObject(hull);
+	map->addLayer(layer);
+	map->addLayer(convexLayer);
     m_oWorkBooks.Close();
     m_oExcelApp.Quit();
  
@@ -725,3 +787,29 @@ bool COOP_LSL_GISView::PtInPolygon (CPoint p, CArray<CPoint ,CPoint>& ptPolygon)
 		return false;
 	}
 } 
+
+
+void COOP_LSL_GISView::OnSize(UINT nType, int cx, int cy)
+{
+	CView::OnSize(nType, cx, cy);
+
+	if(dcMen!=NULL){
+		bmp.DeleteObject();
+		CRect rect;
+		GetClientRect(&rect);
+		CDC *pDC = this->GetDC();
+		bmp.CreateCompatibleBitmap(pDC, rect.Width(),rect.Height());
+		dcMen->SelectObject(&bmp);
+	}
+}
+
+
+void COOP_LSL_GISView::OnDragbutton()
+{
+	isDrag = isDrag?false:true;
+}
+
+void COOP_LSL_GISView::OnUpdateDragbutton(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck(isDrag==true);
+}

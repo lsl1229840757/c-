@@ -100,6 +100,7 @@ BEGIN
     BUTTON      FullView
     BUTTON      generatePoint
     BUTTON      clipButton
+    BUTTON      dragButton
 END
 
 

@@ -52,3 +52,8 @@ void CGeoLayer::clipLayer(CRect clipRect1)
 
 	}
 }
+
+
+void CGeoLayer::setPoint(float L, float B)
+{
+}

@@ -21,5 +21,6 @@ private:
 
 public:
 	void clipLayer(CRect clipRect1);
+	void setPoint(float L, float B);
 };
 

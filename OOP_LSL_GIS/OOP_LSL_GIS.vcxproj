@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
+    <ClInclude Include="ConvexHull.h" />
     <ClInclude Include="CRange.h" />
     <ClInclude Include="CWorkbook.h" />
     <ClInclude Include="CWorkbooks.h" />
@@ -115,14 +116,24 @@
     <ClInclude Include="GeoPoint.h" />
     <ClInclude Include="GeoPolygon.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MapProject.h" />
+    <ClInclude Include="MapProjectionGK.h" />
+    <ClInclude Include="MapProjectionLambert.h" />
+    <ClInclude Include="MapProjectionMercator.h" />
+    <ClInclude Include="MapProjectionUTM.h" />
+    <ClInclude Include="MyCMap.h" />
     <ClInclude Include="OOP_LSL_GIS.h" />
     <ClInclude Include="OOP_LSL_GISDoc.h" />
     <ClInclude Include="OOP_LSL_GISView.h" />
+    <ClInclude Include="PGeoLayer.h" />
+    <ClInclude Include="PGeoObject.h" />
+    <ClInclude Include="PGeoPoint.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConvexHull.cpp" />
     <ClCompile Include="GeoAnno.cpp" />
     <ClCompile Include="GeoLayer.cpp" />
     <ClCompile Include="GeoMap.cpp" />
@@ -131,9 +142,18 @@
     <ClCompile Include="GeoPoint.cpp" />
     <ClCompile Include="GeoPolygon.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MapProject.cpp" />
+    <ClCompile Include="MapProjectionGK.cpp" />
+    <ClCompile Include="MapProjectionLambert.cpp" />
+    <ClCompile Include="MapProjectionMercator.cpp" />
+    <ClCompile Include="MapProjectionUTM.cpp" />
+    <ClCompile Include="MyCMap.cpp" />
     <ClCompile Include="OOP_LSL_GIS.cpp" />
     <ClCompile Include="OOP_LSL_GISDoc.cpp" />
     <ClCompile Include="OOP_LSL_GISView.cpp" />
+    <ClCompile Include="PGeoLayer.cpp" />
+    <ClCompile Include="PGeoObject.cpp" />
+    <ClCompile Include="PGeoPoint.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

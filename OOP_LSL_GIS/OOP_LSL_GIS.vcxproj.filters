@@ -78,6 +78,36 @@
     <ClInclude Include="CWorksheet.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MapProject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MapProjectionLambert.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MapProjectionMercator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MapProjectionGK.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MapProjectionUTM.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MyCMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PGeoLayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PGeoObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PGeoPoint.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvexHull.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OOP_LSL_GIS.cpp">
@@ -114,6 +144,36 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GeoPolygon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MapProject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MapProjectionLambert.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MapProjectionMercator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MapProjectionGK.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MapProjectionUTM.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MyCMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PGeoLayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PGeoObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PGeoPoint.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvexHull.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

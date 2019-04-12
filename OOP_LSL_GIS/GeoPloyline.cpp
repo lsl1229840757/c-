@@ -23,7 +23,7 @@ void CGeoPloyline::Draw(CDC* pDC){
 	CPen *oldPen = pDC->SelectObject(&pen);
 	//DrawDDA(pDC);
 	// 系统贝塞尔选择绿色
-	oldPen = pDC->SelectObject(&penb);
+	//oldPen = pDC->SelectObject(&penb); 取消贝塞尔
 	//pDC->PolyBezier(&pts[0], pts.GetSize()/3*3-2);
 	drawBezier(pDC, pts);
 	// 选择回来
@@ -40,8 +40,8 @@ void CGeoPloyline::Draw(CDC* pDC){
 	if(clipPts.GetSize()!=0){
 		oldPen = pDC->SelectObject(&penb);
 
-		//pDC->PolyBezier(&clipPts[0], clipPts.GetSize()/3*3-2);
-		drawBezier(pDC, clipPts);
+		pDC->PolyBezier(&clipPts[0], clipPts.GetSize()/3*3-2);
+		//drawBezier(pDC, clipPts);
 		// 选择回来
 		pDC->SelectObject(oldPen);
 		/*for (int i = 0; i < clipPts.GetSize(); i++)

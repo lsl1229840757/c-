@@ -6,6 +6,11 @@ CGeoPoint::CGeoPoint(void)
 {
 }
 
+CGeoPoint::CGeoPoint(int x, int y)
+{
+	cpt.x = x;
+	cpt.y = y;
+}
 
 CGeoPoint::~CGeoPoint(void)
 {
@@ -28,4 +33,10 @@ void CGeoPoint::setXY(double x, double y)
 {
 	this->x = x;
 	this->y = y;
+}
+
+
+CPoint CGeoPoint::getPos(void)
+{
+	return CPoint(cpt.x,cpt.y);
 }
