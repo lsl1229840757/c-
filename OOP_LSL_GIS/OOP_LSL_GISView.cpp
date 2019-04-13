@@ -56,6 +56,7 @@ COOP_LSL_GISView::COOP_LSL_GISView()
 	isClip = false;
 	dcMen = NULL;//初始化内存CDC*
 	isDrag = false;
+	isProj = false;
 }
 
 COOP_LSL_GISView::~COOP_LSL_GISView()
@@ -87,20 +88,31 @@ void COOP_LSL_GISView::OnDraw(CDC* pDC)
 		return;
 	}
 	if(map != NULL){
-		CRect rect;
-		GetClientRect(&rect); 
-		if(dcMen==NULL){
-			dcMen = new CDC();//创建新DC（缺省大小是1*1,单色）
-			dcMen->CreateCompatibleDC(pDC);//兼容于pDC
-			bmp.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());
-			dcMen->SelectObject(&bmp);//把位图存入DC
-		}
+		//CRect rect;
+		//GetClientRect(&rect); 
+		//if(dcMen==NULL){
+		//	dcMen = new CDC();//创建新DC（缺省大小是1*1,单色）
+		//	dcMen->CreateCompatibleDC(pDC);//兼容于pDC
+		//	bmp.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());
+		//	dcMen->SelectObject(&bmp);//把位图存入DC
+		//}
 		//map->Draw(pDC);
-		pDC->DPtoLP(&rect);
-		OnPrepareDC(dcMen);
-		dcMen->FillSolidRect(rect,pDC->GetBkColor());
-		map->Draw(dcMen);
-		pDC->BitBlt(rect.left,rect.top,rect.Width(),rect.Height(),dcMen,rect.left,rect.top,SRCCOPY);
+		//pDC->DPtoLP(&rect);
+		//OnPrepareDC(dcMen);
+		//dcMen->FillSolidRect(rect,pDC->GetBkColor());
+		//if(!isProj){
+		//	map->Draw(dcMen);
+		//}else{
+		//	map->Draw(dcMen,new CMapProject);
+		//}
+		//pDC->BitBlt(rect.left,rect.top,rect.Width(),rect.Height(),dcMen,rect.left,rect.top,SRCCOPY);
+
+		if(!isProj){
+			map->Draw(pDC);
+		}else{
+			map->Draw(pDC,new CMapProject);
+		}
+
 	}
 }
 
@@ -220,6 +232,71 @@ void COOP_LSL_GISView::readCHData(FILE *fp)
 		layer->addObject(obj);
 	}
 }
+
+
+void COOP_LSL_GISView::readDiQuJie(FILE * fp)
+{
+	// 将两张图设置到一起去
+	//if(map != NULL && isProj == false) // 这里有bug，其他地方没有把isProj设置为false
+	//{
+	//	delete map;
+	//}
+	//if(isProj == false)
+	//	map = new CGeoMap(1);
+	if(map != NULL) // 这里有bug，其他地方没有把isProj设置为false
+	{
+		delete map;
+	}
+	map = new CGeoMap(1);
+	CGeoLayer *layer = new CGeoLayer;
+	// 开始读文件头
+	char head[100];
+	float left,top,right,bottom;
+	for(int i=0;i<9;i++){
+			fscanf(fp,"%s",&head);
+		}
+		// 读取边界
+		fscanf(fp," (%f,%f) (%f,%f)",&left,&top,&right,&bottom);
+		map->setRect(CRect(left*1e6,bottom*1e6,right*1e6,top*1e6));
+		// 读取无用信息
+		while(strcmp(head,"DATA")){
+			fscanf(fp,"%s",&head);
+		}
+	while(!feof(fp))
+	{
+		int num = 0;
+		// 读取type
+		char type[100];
+		fscanf(fp,"%s",&type);
+		if(!strcmp(type,"LINE")){
+			float L0,B0,L1,B1 = 0;
+			fscanf(fp," %f %f %f %f",&L0,&B0,&L1,&B1);
+			CGeoPoint *p1 = new CGeoPoint(L0*1e6,B0*1e6);
+			CGeoPoint *p2 = new CGeoPoint(L1*1e6,B1*1e6);
+			CGeoObject* line = new CGeoPloyline;
+			((CGeoPloyline*) line)->addGeoPoint(p1);
+			((CGeoPloyline*) line)->addGeoPoint(p2);
+			layer->addObject(line);
+		}else{
+			int num = 0;
+			fscanf(fp,"%d",&num);
+			CGeoObject* line = new CGeoPloyline;
+			for(int i=0;i<num;i++){
+				float L,B = 0;
+				fscanf(fp,"%f %f",&L,&B);
+				CGeoPoint *p = new CGeoPoint(L*1e6,B*1e6);
+				((CGeoPloyline*) line)->addGeoPoint(p);
+			}
+			layer->addObject(line);
+		}
+	}
+		isMapLoaded = true;
+		map->addLayer(layer);
+		winRect = map->crRect;
+		isProj = true;
+}
+
+
 
 void COOP_LSL_GISView::readClipData(FILE * fp)
 {
@@ -391,6 +468,8 @@ void COOP_LSL_GISView::OnFileOpen()
 		readFillTest(fp);
 	else if(fileName.Right(12) == "clipData.txt")
 		readClipData(fp);
+	else if(fileName.Right(20) == "diquJie_polyline.mif"||fileName.Right(14) == "BOUNT_line.mif")
+		readDiQuJie(fp);
 
 	fclose(fp);
 	Invalidate();

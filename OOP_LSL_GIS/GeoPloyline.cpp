@@ -7,13 +7,20 @@ CGeoPloyline::CGeoPloyline(void)
 {
 }
 
-
-
-
-
-
 CGeoPloyline::~CGeoPloyline(void)
 {
+}
+
+void CGeoPloyline::Draw(CDC* pDC,CMapProject *mapPrj){
+	for (int i = 0; i < gpts.GetSize(); i++)
+	{
+		CGeoPoint*p = gpts[i];
+		if(i==0){
+			pDC->MoveTo(CPoint((int)p->L,(int)p->B));
+		}else{
+			pDC->LineTo(CPoint((int)p->L,(int)p->B));
+		}
+	}
 }
 void CGeoPloyline::Draw(CDC* pDC){
 	CPen pen;
@@ -28,14 +35,14 @@ void CGeoPloyline::Draw(CDC* pDC){
 	drawBezier(pDC, pts);
 	// Ñ¡Ôñ»ØÀ´
 	pDC->SelectObject(oldPen);
-	/*for (int i = 0; i < pts.GetSize(); i++)
-	{
-		if(i==0){
-			pDC->MoveTo(pts[i]);
-		}else{
-			pDC->LineTo(pts[i]);
-		}
-	}*/
+	//for (int i = 0; i < pts.GetSize(); i++)
+	//{
+	//	if(i==0){
+	//		pDC->MoveTo(pts[i]);
+	//	}else{
+	//		pDC->LineTo(pts[i]);
+	//	}
+	//}
 	
 	if(clipPts.GetSize()!=0){
 		oldPen = pDC->SelectObject(&penb);
@@ -204,4 +211,10 @@ void CGeoPloyline::drawBezier(CDC * pDC, CArray<CPoint,CPoint>& pts)
 			pDC->LineTo(tempArray[i]);
 		}
 	}
+}
+
+
+void CGeoPloyline::addGeoPoint(CGeoPoint * p)
+{
+	this->gpts.Add(p);
 }

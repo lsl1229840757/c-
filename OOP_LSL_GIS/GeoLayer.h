@@ -1,5 +1,6 @@
 #pragma once
 #include "GeoObject.h"
+#include "MapProject.h"
 class CGeoLayer
 {
 public:
@@ -12,6 +13,7 @@ public:
 	void Draw(CDC *pDC);
 	void setName(CString name);
 	CString CGeoLayer::getName();
+	void Draw(CDC *pDC, CMapProject *mapPrj);
 	CArray<CGeoObject *,CGeoObject *>& getObjects();
 private:
 	CString Name;

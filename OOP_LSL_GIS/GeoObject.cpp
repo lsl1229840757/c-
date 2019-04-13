@@ -22,6 +22,10 @@ void CGeoObject::setRect(CRect rect){
 	this->crRect = rect;
 }
 
+void CGeoObject::Draw(CDC *pDC,CMapProject *mapPrj)
+{
+}
+
 CRect CGeoObject::getRect(){
 	return this->crRect;
 }

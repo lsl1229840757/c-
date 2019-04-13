@@ -11,12 +11,14 @@ public:
 	void setPoint(int x,int y);
 	void setPoint(CPoint pt);
 	void Draw(CDC *pDC);
-	CGeoPoint::CGeoPoint(int x, int y);
+	CGeoPoint(float L, float B);
 private:
 	CPoint cpt;
 
 
 public:
+	float L;
+	float B;
 	void setXY(double x, double y);
 	CPoint getPos(void);
 };

@@ -3,8 +3,6 @@
 
 
 MyCMap::MyCMap(void)
-	: a(0)
-	, e(0)
 {
 }
 

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "GeoLayer.h"
 
-
 CGeoLayer::CGeoLayer(void)
 {
 }
@@ -20,6 +19,12 @@ void CGeoLayer::Draw(CDC *pDC){
 	for (int i = 0; i < geoObjects.GetSize(); i++)
 	{
 		geoObjects[i]->Draw(pDC);
+	}
+}
+void CGeoLayer::Draw(CDC *pDC,CMapProject *mapPrj){
+	for (int i = 0; i < geoObjects.GetSize(); i++)
+	{
+		geoObjects[i]->Draw(pDC,mapPrj);
 	}
 }
 

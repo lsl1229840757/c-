@@ -6,11 +6,13 @@ CGeoPoint::CGeoPoint(void)
 {
 }
 
-CGeoPoint::CGeoPoint(int x, int y)
+
+CGeoPoint::CGeoPoint(float L, float B)
 {
-	cpt.x = x;
-	cpt.y = y;
+	this->L = L;
+	this->B = B;
 }
+
 
 CGeoPoint::~CGeoPoint(void)
 {

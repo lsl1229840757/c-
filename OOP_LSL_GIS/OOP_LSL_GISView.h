@@ -45,6 +45,7 @@ protected:
 
 // 实现
 public:
+	bool isProj;
 	CBitmap bmp;
 	CDC *dcMen; // 内存CDC *
 	bool isZoomIn;
@@ -61,6 +62,7 @@ public:
 	void readCH1OPTD(FILE *fp);
 	bool isDrag;
 	void readTxt(FILE *fp);
+	void readDiQuJie(FILE * fp);
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;

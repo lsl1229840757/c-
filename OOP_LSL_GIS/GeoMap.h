@@ -1,6 +1,7 @@
 #pragma once // 保证.h只被包含一次
 #include "GeoLayer.h"
 #include "atltypes.h"
+#include "MapProject.h"
 class CGeoMap
 {
 public:
@@ -19,6 +20,7 @@ public:
 	void delLayerAll(); // 删除所有图层
 	void setLayerIsVisible(CString layerName,boolean isVisible); // 设定某个图层可视
 	void Draw(CDC *pDC); //画图
+	void Draw(CDC *pDC, CMapProject *mapPrj);
 	void setRect(CRect rect);
 	CRect getRect();
 	void addLayer(CGeoLayer *layer);

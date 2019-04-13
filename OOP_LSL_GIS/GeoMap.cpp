@@ -41,6 +41,14 @@ void CGeoMap::Draw(CDC *pDC){
 	}
 }
 
+void CGeoMap::Draw(CDC *pDC, CMapProject *mapPrj){
+	for (int i = 0; i < geoLayers.GetSize(); i++)
+	{
+		geoLayers[i]->Draw(pDC,mapPrj);
+	}
+}
+
+
 void CGeoMap::addLayer(CGeoLayer *layer){
 	geoLayers.Add(layer);
 }
