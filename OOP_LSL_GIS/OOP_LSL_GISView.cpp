@@ -2,7 +2,7 @@
 // OOP_LSL_GISView.cpp : COOP_LSL_GISView 类的实现
 //
 #include "stdafx.h"
-
+#include "MapProjectionMercator.h"
 // SHARED_HANDLERS 可以在实现预览、缩略图和搜索筛选器句柄的
 // ATL 项目中进行定义，并允许与该项目共享文档代码。
 #ifndef SHARED_HANDLERS
@@ -57,6 +57,7 @@ COOP_LSL_GISView::COOP_LSL_GISView()
 	dcMen = NULL;//初始化内存CDC*
 	isDrag = false;
 	isProj = false;
+	projNum = 0;
 }
 
 COOP_LSL_GISView::~COOP_LSL_GISView()
@@ -88,31 +89,51 @@ void COOP_LSL_GISView::OnDraw(CDC* pDC)
 		return;
 	}
 	if(map != NULL){
-		//CRect rect;
-		//GetClientRect(&rect); 
-		//if(dcMen==NULL){
-		//	dcMen = new CDC();//创建新DC（缺省大小是1*1,单色）
-		//	dcMen->CreateCompatibleDC(pDC);//兼容于pDC
-		//	bmp.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());
-		//	dcMen->SelectObject(&bmp);//把位图存入DC
-		//}
-		//map->Draw(pDC);
-		//pDC->DPtoLP(&rect);
-		//OnPrepareDC(dcMen);
-		//dcMen->FillSolidRect(rect,pDC->GetBkColor());
-		//if(!isProj){
-		//	map->Draw(dcMen);
-		//}else{
-		//	map->Draw(dcMen,new CMapProject);
-		//}
-		//pDC->BitBlt(rect.left,rect.top,rect.Width(),rect.Height(),dcMen,rect.left,rect.top,SRCCOPY);
-
-		if(!isProj){
-			map->Draw(pDC);
-		}else{
-			map->Draw(pDC,new CMapProject);
+		CRect rect;
+		GetClientRect(&rect); 
+		if(dcMen==NULL){
+			dcMen = new CDC();//创建新DC（缺省大小是1*1,单色）
+			dcMen->CreateCompatibleDC(pDC);//兼容于pDC
+			bmp.CreateCompatibleBitmap(pDC,rect.Width(),rect.Height());
+			dcMen->SelectObject(&bmp);//把位图存入DC
 		}
-
+		
+		if(!isProj){
+			//map->Draw(pDC);
+			pDC->DPtoLP(&rect);
+			OnPrepareDC(dcMen);
+			dcMen->FillSolidRect(rect,pDC->GetBkColor());
+			map->Draw(dcMen);
+			pDC->BitBlt(rect.left,rect.top,rect.Width(),rect.Height(),dcMen,rect.left,rect.top,SRCCOPY);
+		}else{
+			CMapProject *mapPrj = new CMapProjectionMercator;
+			//更换rect
+			CRect rectTempt = winRect;
+			float L0,B0,L1,B1,x0,y0,x1,y1 = 0;
+			L0 = rectTempt.left;
+			B0 = rectTempt.top;
+			L1 = rectTempt.right;
+			B1 = rectTempt.bottom;
+			CRect crectTempt;
+			//判断是否是第一次投影
+			if(projNum == 0){
+				mapPrj->getXY(L0,B0,&x0,&y0);
+				mapPrj->getXY(L1,B1,&x1,&y1);
+				projNum++;
+				crectTempt = CRect(x0,y0,x1,y1);
+			}else{
+				crectTempt = CRect(L0,B0,L1,B1);
+			}
+			//map->setRect(crectTempt);
+			winRect = crectTempt;
+			OnPrepareDC(pDC);
+			pDC->DPtoLP(&rect);
+			OnPrepareDC(dcMen);
+			dcMen->FillSolidRect(rect,pDC->GetBkColor());
+			mapPrj->Draw(dcMen,map->getRect());
+			map->Draw(dcMen,mapPrj);
+			pDC->BitBlt(rect.left,rect.top,rect.Width(),rect.Height(),dcMen,rect.left,rect.top,SRCCOPY);
+		}
 	}
 }
 
@@ -503,7 +524,6 @@ void COOP_LSL_GISView::OnPrepareDC(CDC* pDC, CPrintInfo* pInfo)
 	pDC->SetWindowExt(size2);   //设置窗口长宽
 	pDC->SetWindowOrg(pt);	//设置窗口原点
 	CSize size3 = pDC->GetWindowExt();
-	
 }
 
 
@@ -600,6 +620,7 @@ void COOP_LSL_GISView::OnUpdateClipbutton(CCmdUI *pCmdUI)
 
 void COOP_LSL_GISView::OnFullview()
 {
+	projNum = 0;
 	winRect = map->crRect;
 	Invalidate();
 }

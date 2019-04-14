@@ -2,7 +2,6 @@
 #include "GeoPloyline.h"         
 
 
-
 CGeoPloyline::CGeoPloyline(void)
 {
 }
@@ -15,10 +14,12 @@ void CGeoPloyline::Draw(CDC* pDC,CMapProject *mapPrj){
 	for (int i = 0; i < gpts.GetSize(); i++)
 	{
 		CGeoPoint*p = gpts[i];
+		float x,y = 0;
+		mapPrj->getXY(p->L,p->B,&x,&y);
 		if(i==0){
-			pDC->MoveTo(CPoint((int)p->L,(int)p->B));
+			pDC->MoveTo(CPoint((int)x,(int)y));
 		}else{
-			pDC->LineTo(CPoint((int)p->L,(int)p->B));
+			pDC->LineTo(CPoint((int)x,(int)y));
 		}
 	}
 }

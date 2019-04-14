@@ -45,6 +45,7 @@ protected:
 
 // 实现
 public:
+	int projNum;
 	bool isProj;
 	CBitmap bmp;
 	CDC *dcMen; // 内存CDC *
